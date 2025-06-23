@@ -73,7 +73,7 @@ class Counter extends Component
 } ?>
 
 <x-app.layout>
-    <template livewire> 
+    <template livewire> {# <-- Make it Livewire! #}
         <div>
             {{ $count }}
             <button wire:click="increment">+</button>
@@ -86,17 +86,14 @@ class Counter extends Component
 
 Omni components will execute in one of three modes depending on the type you declare and the template structure.
 
-### Standard Mode
+* **Standard Mode**
+  All components that declare a `standard` template execute in standard mode, with no Livewire features. They support `mount` and `rendering` lifecycle hooks.
 
-All components that declare a `standard` template execute in standard mode, with no Livewire features. They support `mount` and `rendering` lifecycle hooks.
+* **Livewire Mode**
+  Components that declare a `livewire` template and have no code outside of the `<template>` tag execute in Livewire mode, with full Livewire features. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
 
-### Livewire Mode
-
-Components that declare a `livewire` template and have no code outside of the `<template>` tag execute in Livewire mode, with full Livewire features. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
-
-### Combined Mode
-
-Components that declare a `livewire` template and code outside of the `<template>` tag execute in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag is executed in standard mode, and then the part of the template inside the `<template>` tag is executed in Livewire mode.
+* **Combined Mode**
+  Components that declare a `livewire` template and have code outside of the `<template>` tag execute in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag is executed in standard mode, and then the part of the template inside the `<template>` tag is executed in Livewire mode.
 
 ## Component Features
 
