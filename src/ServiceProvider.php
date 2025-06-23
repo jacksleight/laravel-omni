@@ -45,8 +45,8 @@ class ServiceProvider extends BaseServiceProvider
 
     protected function bootMacros()
     {
-        View::macro('omni', [Omni::class, 'mount']);
-        Router::macro('omni', [Omni::class, 'route']);
+        View::macro('mount', [Omni::class, 'mount']);
+        Router::macro('mount', [Omni::class, 'route']);
 
         return $this;
     }

@@ -13,7 +13,7 @@ All Omni components can:
 
 - Be declared as standard or Livewire components
 - Be mounted to a route as a full-page component  
-- Be mounted from a controller
+- Be rendered from a controller
 - Be rendered in a template using `<x-component>` syntax  
 - Use layouts, slots, and attribute bags
 - Define helper functions that can be used in templates
@@ -81,7 +81,7 @@ class Counter extends Component
 
 ### Name, Path and Class
 
-An Omni component's name, class and path map directly to one another and must all match. Additionally the namespace must include `Omni`. The part before `Omni` is the prefix, and the part after is the component name, for example:
+An Omni component's name, path and class map directly to one another and must all match. Additionally the namespace must include `Omni`. The part before `Omni` is the component prefix, and the part after is the component name, for example:
 
 ```
 Name:  counter
@@ -146,7 +146,7 @@ protected function random()
 
 ### Attributes & Slots
 
-Use attributes and slots as usual, Omni provides Livewire synthesizers to handle the serializion when necessary. 
+Use attributes and slots as usual. Omni provides Livewire synthesizers to handle the serialization when necessary. 
 
 ```blade
 <template render>
@@ -156,13 +156,47 @@ Use attributes and slots as usual, Omni provides Livewire synthesizers to handle
 </template>
 ```
 
-## Mounting Components
+## Rendering Components
 
 ### Blade Templates
 
+To render a component in a Blade template just use the usual syntax:
+
+```blade
+<x-counter :count="4" />
+```
+
 ### Controllers
 
+To render a component from a controller action use the view macro:
+
+```php
+return view()->mount('counter', ['count' => 4]);
+```
+
+Or the class directly:
+
+```php
+use App\Omni\Counter;
+
+return (new Counter)(['count' => 4]);
+```
+
 ### Routes
+
+To mount a component to a route use the route macro:
+
+```php
+Route::mount('counter/{count}', 'counter');
+```
+
+Or the class directly:
+
+```php
+use App\Omni\Counter;
+
+Route::get('counter/{count}', Counter::class);
+```
 
 ## Component Execution
 

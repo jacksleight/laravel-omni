@@ -26,6 +26,11 @@ class Component extends LivewireComponent
         $this->info = Omni::prepare(class: static::class);
     }
 
+    public function __invoke()
+    {
+        dd('TODO');
+    }
+
     protected function data()
     {
         return array_merge(
