@@ -110,14 +110,9 @@ class Manager
             return null;
         }
 
-        // dump($data, $data['attributes']->getAttributes());
-
         $props = Utils::resolveProps($info->class, $data);
 
-        // dump($props, $props['attributes']->getAttributes());
-        // exit;
-
-        if ($info->type === Component::LIVEWIRE) {
+        if ($info->mode === Component::LIVEWIRE) {
             return new HtmlString(Livewire::mount($info->name, $props));
         }
 
@@ -215,11 +210,11 @@ class Manager
         }
 
         if (! file_exists($info->innerPath)) {
-            $info->type = Component::STANDARD;
+            $info->mode = Component::STANDARD;
         } elseif (Str::contains(file_get_contents($info->outerPath), static::TEMPLATE_EMPTY)) {
-            $info->type = Component::LIVEWIRE;
+            $info->mode = Component::LIVEWIRE;
         } else {
-            $info->type = Component::COMBINED;
+            $info->mode = Component::COMBINED;
         }
 
         return $info;
