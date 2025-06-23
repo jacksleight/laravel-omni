@@ -9,14 +9,13 @@ The core goals of Omni are:
 - A single directory structure for organising components
 - A single file for all component concerns (logic, template, scripts and styles)
 
-And all Omni components can:
+All Omni components can:
 
 - Be declared as standard or Livewire components
 - Be mounted to a route as a full-page component  
 - Be mounted from a controller
 - Be rendered in a template using `<x-component>` syntax  
-- Use layouts, slots, and attribute bags  
-- Define and typehint their properties
+- Use layouts, slots, and attribute bags
 - Define helper functions that can be used in templates
 - Include JS and CSS that’s bundled by Vite
 - Extend other Omni components
@@ -24,7 +23,7 @@ And all Omni components can:
 
 ## Defining Components
 
-Omni components can live in any view directory, and a basic component looks like this:
+A standard component looks like this:
 
 ```blade
 <?php 
@@ -80,14 +79,14 @@ class Counter extends Component
 </x-app.layout>
 ```
 
-### Class and Namespace
+### Name, Path and Class
 
-An Omni component's class and namespace maps directly to the component's prefix, name and path. They must all match, and the namespace must include `Omni`. The part before `Omni` is the prefix, and the part after is the component name, for example:
+An Omni component's name, class and path map directly to one another and must all match. Additionally the namespace must include `Omni`. The part before `Omni` is the prefix, and the part after is the component name, for example:
 
 ```
-Name:  image
-Path:  resources/views/image.blade.php
-Class: App\Omni\Image
+Name:  counter
+Path:  resources/views/counter.blade.php
+Class: App\Omni\Counter
 
 Name:  my-package::events.stat-counter
 Path:  vendor/my-package/resources/views/events/stat-counter.blade.php
@@ -96,7 +95,7 @@ Class: MyPackage\Omni\Events\StatCounter
 
 ### Lifecycle
 
-Non-Livewire components support `mount` and `rendering` lifecycle hooks:
+Standard components support `mount` and `rendering` lifecycle hooks:
 
 ```php
 protected function mount($value)
@@ -114,7 +113,7 @@ Livewire components run through the usual [Livewire lifecycle](https://livewire.
 
 ### With
 
-All public properties and helper functions will be provided to the template as usual. To pass additional variables to the template use the `with` method:
+To pass additional variables to the template use the `with` method:
 
 ```php
 protected function with()
@@ -127,7 +126,7 @@ protected function with()
 
 ### Helpers
 
-Public methods on standard Blade components are helpers you can call from the template, but public methods on Livewire components are actions you can call from the client. Due to this conflict Omni components work a bit differently. To add helper functions to an Omni component the method should be defined as `protected` with a `#[Helper]` attribute:
+To create helper functions that you can call from the template define `protected` methods with the `#[Helper]` attribute:
 
 ```php
 use JackSleight\LaravelOmni\Attributes\Helper;
@@ -137,6 +136,24 @@ protected function random()
 {
     // ...
 }
+```
+
+```blade
+<div>
+    {{ $random() }}
+</div>
+```
+
+### Attributes & Slots
+
+Use attributes and slots as usual, Omni provides Livewire synthesizers to handle the serializion when necessary. 
+
+```blade
+<template render>
+    <div {{ $attributes->class('p-4') }}>
+        {{ $slot }}
+    </div>
+</template>
 ```
 
 ## Mounting Components
