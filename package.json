@@ -1,0 +1,7 @@
+{
+    "private": true,
+    "type": "module",
+    "devDependencies": {
+        "fast-glob": "^3.3.3"
+    }
+}
