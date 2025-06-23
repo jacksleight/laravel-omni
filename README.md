@@ -1,20 +1,20 @@
 # Omni
 
-Omni is a Laravel package and Vite plugin for building universal single-file components.
+Omni is a Laravel package and Vite plugin for building universal single-file Blade components, with or without Livewire features.
 
 The core goals of Omni are:
 
-- A single API for defining components (with or without Livewire features)
-- A single syntax for including and mounting components
+- A single API for defining components
+- A single syntax for mounting and rendering components
 - A single directory structure for organising components
-- A single file for all component concerns (logic, template, scripts and styles)
+- A single file for all component concerns (logic, template, styles and scripts)
 
 All Omni components can:
 
-- Be declared as standard or Livewire components
+- Be declared as either standard or Livewire components
 - Be mounted to a route as a full-page component  
 - Be rendered from a controller
-- Be rendered in a template using `<x-component>` syntax  
+- Be rendered in a template using `x-` syntax  
 - Use layouts, slots, and attribute bags
 - Define helper functions that can be used in templates
 - Include JS and CSS that’s bundled by Vite
@@ -81,7 +81,7 @@ class Counter extends Component
 
 ### Name, Path and Class
 
-An Omni component's name, path and class map directly to one another and must all match. Additionally the namespace must include `Omni`. The part before `Omni` is the component prefix, and the part after is the component name, for example:
+An Omni component's name, path and class map directly to one another and must all match. Additionally the class namespace must include `Omni`. The part before `Omni` is the component prefix, and the part after is the component name, for example:
 
 ```
 Name:  counter
@@ -92,6 +92,8 @@ Name:  my-package::events.stat-counter
 Path:  vendor/my-package/resources/views/events/stat-counter.blade.php
 Class: MyPackage\Omni\Events\StatCounter
 ```
+
+A blank name prefix maps to the `App` class namespace.
 
 ### Lifecycle
 
@@ -146,7 +148,7 @@ protected function random()
 
 ### Attributes & Slots
 
-Use attributes and slots as usual. Omni provides Livewire synthesizers to handle the serialization when necessary. 
+Use attributes and slots as usual. If you're using them in Livewire components Omni provides synthesizers to handle the serialization. 
 
 ```blade
 <template render>
@@ -160,7 +162,7 @@ Use attributes and slots as usual. Omni provides Livewire synthesizers to handle
 
 ### Blade Templates
 
-To render a component in a Blade template just use the usual syntax:
+To render any component in a Blade template use the `x-` syntax:
 
 ```blade
 <x-counter :count="4" />
@@ -168,7 +170,7 @@ To render a component in a Blade template just use the usual syntax:
 
 ### Controllers
 
-To render a component from a controller action use the view macro:
+To render any component from a controller action use the `mount` view macro:
 
 ```php
 return view()->mount('counter', ['count' => 4]);
@@ -177,14 +179,12 @@ return view()->mount('counter', ['count' => 4]);
 Or the class directly:
 
 ```php
-use App\Omni\Counter;
-
-return (new Counter)(['count' => 4]);
+return App\Omni\Counter::make(['count' => 4]);
 ```
 
 ### Routes
 
-To mount a component to a route use the route macro:
+To mount any component to a route use the `mount` route macro:
 
 ```php
 Route::mount('counter/{count}', 'counter');
@@ -193,9 +193,7 @@ Route::mount('counter/{count}', 'counter');
 Or the class directly:
 
 ```php
-use App\Omni\Counter;
-
-Route::get('counter/{count}', Counter::class);
+Route::get('counter/{count}', App\Omni\Counter::class);
 ```
 
 ## Component Execution
