@@ -71,7 +71,7 @@ class Counter extends Component
 } ?>
 
 <x-app.layout>
-    <template render:livewire> {{-- ← Make it Livewire! --}}
+    <template wire:render> {{-- ← Make it Livewire! --}}
         <div>
             {{ $count }}
             <button wire:click="increment">+</button>
