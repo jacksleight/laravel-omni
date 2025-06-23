@@ -4,10 +4,10 @@ Omni is a Laravel package and Vite plugin for building universal single-file com
 
 The core goals of Omni are:
 
-- A single API for defining components.
-- A single syntax for calling components.
-- A single structure for organising components.
-- A single file for all component parts (logic, template, scripts and styles).
+- A single API for defining components
+- A single syntax for calling components
+- A single structure for organising components
+- A single file for all component parts (logic, template, scripts and styles)
 
 All Omni components can:
 
