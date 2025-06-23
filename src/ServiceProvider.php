@@ -11,6 +11,11 @@ use Livewire\Livewire;
 
 class ServiceProvider extends BaseServiceProvider
 {
+    public function register()
+    {
+        $this->app->singleton(Manager::class);
+    }
+
     public function boot()
     {
         $this
@@ -40,7 +45,7 @@ class ServiceProvider extends BaseServiceProvider
 
     protected function bootMacros()
     {
-        View::macro('omni', [Omni::class, 'render']);
+        View::macro('omni', [Omni::class, 'mount']);
         Router::macro('omni', [Omni::class, 'route']);
 
         return $this;
