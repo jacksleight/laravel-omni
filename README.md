@@ -26,7 +26,7 @@ All Omni components can:
 
 A basic Omni component looks like this:
 
-```php
+```blade
 <?php 
 namespace App\Omni;
 
@@ -56,7 +56,7 @@ class Counter extends Component
 
 Or if you need Livewire features and a layout:
 
-```php
+```blade
 <?php 
 namespace App\Omni;
 
