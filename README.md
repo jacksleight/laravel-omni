@@ -9,7 +9,7 @@ The core goals of Omni are:
 - A single directory structure for organising components
 - A single file for all component concerns (logic, template, scripts and styles)
 
-All Omni components can:
+And all Omni components can:
 
 - Be declared as standard or Livewire components
 - Be mounted to a route as a full-page component  
@@ -22,9 +22,9 @@ All Omni components can:
 - Extend other Omni components
 - Live in any view directory
 
-## Component Structure
+## Defining Components
 
-A basic Omni component looks like this:
+Omni components can live in any view directory, and a basic component looks like this:
 
 ```blade
 <?php 
@@ -71,7 +71,7 @@ class Counter extends Component
 } ?>
 
 <x-app.layout>
-    <template wire:render> {{-- ← Make it Livewire! --}}
+    <template wire:render> {{-- Make it Livewire! --}}
         <div>
             {{ $count }}
             <button wire:click="increment">+</button>
@@ -80,20 +80,37 @@ class Counter extends Component
 </x-app.layout>
 ```
 
-## Component Execution
+### Class and Namespace
 
-Omni components will execute in one of three modes depending on the type you declare and the template structure.
+An Omni component's class and namespace maps directly to the component's prefix, name and path. They must all match, and the namespace must include `Omni`. The part before `Omni` is the prefix, and the part after is the component name, for example:
 
-* **Standard Mode**  
-  All components that declare a `standard` template execute in standard mode, with no Livewire features. They support `mount` and `rendering` lifecycle hooks.
+```
+Name:  image
+Path:  resources/views/image.blade.php
+Class: App\Omni\Image
 
-* **Livewire Mode**  
-  Components that declare a `livewire` template and have no code outside of the `<template>` tag execute in Livewire mode, with full Livewire features. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
+Name:  my-package::events.stat-counter
+Path:  vendor/my-package/resources/views/events/stat-counter.blade.php
+Class: MyPackage\Omni\Events\StatCounter
+```
 
-* **Combined Mode**  
-  Components that declare a `livewire` template and have code outside of the `<template>` tag execute in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag is executed in standard mode, and then the part of the template inside the `<template>` tag is executed in Livewire mode.
+### Lifecycle
 
-## Component Features
+Non-Livewire components support `mount` and `rendering` lifecycle hooks:
+
+```php
+protected function mount($value)
+{
+    // ...
+}
+
+protected function rendering($view)
+{
+    // ...
+}
+```
+
+Livewire components run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
 
 ### With
 
@@ -103,7 +120,7 @@ All public properties and helper functions will be provided to the template as u
 protected function with()
 {
     return [
-        'labels' => // ...
+        // ...
     ];
 }
 ```
@@ -118,6 +135,31 @@ use JackSleight\LaravelOmni\Attributes\Helper;
 #[Helper]
 protected function random()
 {
-    return rand(100, 999);
+    // ...
 }
 ```
+
+## Mounting Components
+
+### Blade Templates
+
+### Controllers
+
+### Routes
+
+## Component Execution
+
+Omni components will execute in one of three modes depending on the type you declare and the template structure.
+
+* **Standard Mode**  
+  All components that declare a `render` template execute in standard mode, with no Livewire features. They support `mount` and `rendering` lifecycle hooks.
+
+* **Livewire Mode**  
+  Components that declare a `wire:render` template and have no code outside of the `<template>` tag execute in Livewire mode, with full Livewire features. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
+
+* **Combined Mode**  
+  Components that declare a `wire:render` template and have code outside of the `<template>` tag execute in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag is executed in standard mode, and then the part of the template inside the `<template>` tag is executed in Livewire mode.
+
+## Credits
+
+While Omni does not depend on [Livewire Volt](https://livewire.laravel.com/docs/volt), it is obviously heavily inspired by Volt's single-file structure and class-based syntax. This package would not exist if it wasn't for Volt, so a huge thanks to the Volt team. ❤️
