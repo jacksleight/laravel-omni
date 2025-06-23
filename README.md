@@ -97,7 +97,7 @@ Omni components will execute in one of three modes depending on the type you dec
 
 ## Component Features
 
-## With
+### With
 
 All public properties and helper functions will be provided to the template as usual. To pass additional variables to the template use the `with` method:
 
@@ -110,11 +110,11 @@ protected function with()
 }
 ```
 
-## Helpers
+### Helpers
 
 Public methods on standard Blade components are helpers you can call from the template, but public methods on Livewire components are actions you can call from the client. Due to this conflict Omni components work a bit differently. To add helper functions to an Omni component the method should be defined as `protected` with a `#[Helper]` attribute:
 
-```
+```php
 use JackSleight\LaravelOmni\Attributes\Helper;
 
 #[Helper]
