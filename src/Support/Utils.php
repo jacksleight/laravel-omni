@@ -3,7 +3,6 @@
 namespace JackSleight\LaravelOmni\Support;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 use ReflectionClass;
 use ReflectionProperty;
@@ -38,16 +37,15 @@ class Utils
 
     public static function resolveProps($class, $data = [])
     {
-        $public = Utils::getPublicPropertyNames($class);
+        $names = Utils::getPublicPropertyNames($class);
 
         $attributes = $data['attributes'] ?? new ComponentAttributeBag;
-        $attributes->setAttributes(collect($data)
-            ->except($public)
-            ->mapWithKeys(fn ($value, $name) => [Str::kebab($name) => $value])
-            ->all());
 
-        $props = Arr::only($data, $public);
-        $props['attributes'] = $attributes;
+        $props = Arr::only(array_merge(
+            $data,
+            $attributes->onlyProps($names)->getAttributes(),
+        ), $names);
+        $props['attributes'] = $attributes->exceptProps($names);
 
         return $props;
     }

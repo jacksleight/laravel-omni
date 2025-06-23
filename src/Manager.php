@@ -90,7 +90,7 @@ class Manager
 
         $data = $attributes['data'];
 
-        return $this->divert(fn ($slots) => $this->mount($info->name, array_merge($data, $slots)));
+        return $this->divert(fn ($more) => $this->mount($info->name, array_merge($data, $more)));
     }
 
     public function resolveLivewire(string $name): ?string
@@ -110,7 +110,12 @@ class Manager
             return null;
         }
 
+        // dump($data, $data['attributes']->getAttributes());
+
         $props = Utils::resolveProps($info->class, $data);
+
+        // dump($props, $props['attributes']->getAttributes());
+        // exit;
 
         if ($info->type === Component::LIVEWIRE) {
             return new HtmlString(Livewire::mount($info->name, $props));
@@ -343,7 +348,10 @@ class Manager
 
             public function resolveView()
             {
-                return fn ($data) => ($this->callback)(Utils::resolveSlots($data));
+                return fn ($data) => ($this->callback)(array_merge(
+                    ['attributes' => $this->attributes],
+                    Utils::resolveSlots($data),
+                ));
             }
 
             public function data()
