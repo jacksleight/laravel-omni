@@ -236,4 +236,8 @@ These are intentional differences in the way Omni components behave compared to 
 
 ## Credits
 
-While Omni does not depend on [Livewire Volt](https://livewire.laravel.com/docs/volt) and doesn't support any of it's functional syntax, it is obviously heavily inspired by Volt's single-file structure. This package would not exist if it wasn't for Volt, so a huge thanks to the Volt team. ❤️
+While Omni does not depend on [Livewire Volt](https://github.com/livewire/volt) and doesn't support any of it's functional syntax, it is obviously heavily inspired by Volt's single-file structure. This package would not exist if it wasn't for Volt, so a huge thanks to the Volt team. ❤️
+
+## Sponsoring 
+
+This package is completely free to use. However fixing bugs, adding features and helping users takes time and effort. If you find this useful and would like to support its development any [contribution](https://github.com/sponsors/jacksleight) would be greatly appreciated. Thanks! 🙂
