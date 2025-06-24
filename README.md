@@ -55,7 +55,7 @@ class Counter extends Component
 </script>
 ```
 
-And if you want Livewire features and a layout:
+If you want Livewire features and a layout:
 
 ```blade
 <?php 
@@ -214,7 +214,39 @@ Omni components will execute in one of three modes depending on the `<template>`
 
 ## Bundling Scripts & Styles
 
-...
+Any Omni `<script>` and `<style>` blocks will be excluded from the templates and can instead be included in your JS and CSS bundles using the provided Vite plugin. To set that up add the Omni package as a dependency in `package.json`:
+
+```js
+{
+    "dependencies": {
+        "omni": "file:./vendor/jacksleight/laravel-omni"
+    }
+}
+```
+
+Then add the plugin in `vite.config.js`:
+
+```js
+import omni from 'omni/plugins/vite';
+
+export default defineConfig({
+    plugins: [
+        omni({ views: [
+            __dirname + '/resources/views',
+        ] }),
+    ],
+});
+```
+
+And finally import the Omni scripts and styles into your `app.js` and `app.css` files:
+
+```js
+import 'omni/scripts';
+```
+
+```css
+@import 'omni/styles';
+```
 
 ## Differences & Issues
 
@@ -233,6 +265,12 @@ These are intentional differences in the way Omni components behave compared to 
 ### Unknown Differences & Issues
 
 * Almost definitely.
+
+## Troubleshooting
+
+### Error `Using $this when not in object context`
+
+You may be trying to use a computed Livewire property in a standard non-Livewire template.
 
 ## Credits
 

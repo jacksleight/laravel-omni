@@ -21,9 +21,9 @@ class Manager
 
     const TEMPLATE_REGEX = '/<template\s+(omni(?:\:wire)?)>(.*)<\/template>/is';
 
-    const SCRIPT_REGEX = '/<style\s+bundle>(.*?)<\/style>/is';
+    const SCRIPT_REGEX = '/<style\s+omni>(.*?)<\/style>/is';
 
-    const STYLE_REGEX = '/<script\s+bundle>(.*?)<\/script>/is';
+    const STYLE_REGEX = '/<script\s+omni>(.*?)<\/script>/is';
 
     const TEMPLATE_EMPTY = '<?php /**OMNI_TEMPLATE_EMPTY**/ ?>';
 
@@ -171,7 +171,7 @@ class Manager
         $outerPath = Blade::getCompiledPath($path);
 
         $info = (object) [
-            'type' => null,
+            'mode' => null,
             'name' => $name,
             'path' => $path,
             'class' => $class,
