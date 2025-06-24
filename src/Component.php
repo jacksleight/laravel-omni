@@ -19,33 +19,33 @@ class Component extends LivewireComponent
     use HasHelpers;
     use HasSlot;
 
-    protected $info;
-
-    public function __construct()
-    {
-        $this->info = Omni::prepare(class: static::class);
-    }
-
     public function __invoke()
     {
-        dd('TODO');
+        return Omni::mount(static::class, request()->route()->parameters());
     }
 
     protected function data()
     {
         return array_merge(
             $this->all(),
-            $this->extractHelperMethods(),
+            $this->helpers(),
             $this->with(),
         );
     }
 
+    protected function with()
+    {
+        return [];
+    }
+
     public function render($outer = false)
     {
+        $info = Omni::prepare(class: static::class);
+
         if ($outer) {
-            return view($this->info->name, $this->data());
+            return view($info->name, $this->data());
         }
 
-        return view()->file($this->info->innerPath, $this->data());
+        return view()->file($info->innerPath, $this->data());
     }
 }

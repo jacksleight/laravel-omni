@@ -14,12 +14,8 @@ class Utils
         $reflection = new ReflectionClass($class);
         $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
 
-        $props = [];
-        foreach ($properties as $property) {
-            $props[] = $property->getName();
-        }
-
-        return $props;
+        return collect($properties)
+            ->map(fn ($property) => $property->getName())->toArray();
     }
 
     public static function getMethodArgumentNames(string $class, $method)
@@ -27,12 +23,9 @@ class Utils
         $reflection = new \ReflectionMethod($class, $method);
         $parameters = $reflection->getParameters();
 
-        $args = [];
-        foreach ($parameters as $parameter) {
-            $args[] = $parameter->getName();
-        }
-
-        return $args;
+        return collect($parameters)
+            ->map(fn ($parameter) => $parameter->getName())
+            ->toArray();
     }
 
     public static function resolveProps($class, $data = [])

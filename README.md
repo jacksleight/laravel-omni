@@ -73,14 +73,14 @@ class Counter extends Component
     }
 } ?>
 
-<x-app.layout>
+<x-layout>
     <template omni:wire> {{-- Make it Livewire! --}}
         <div>
             {{ $count }}
             <button wire:click="increment">+</button>
         </div>
     </template>
-</x-app.layout>
+</x-layout>
 ```
 
 ### Name, Path and Class
@@ -191,8 +191,8 @@ To mount any component to a route use the `omni` route macro or class directly:
 use App\Omni\Counter;
 use JackSleight\LaravelOmni\Omni;
 
-Route::omni('counter/{count}', 'counter');
-Route::omni('counter/{count}', Counter::class);
+Route::omni('counter/{count}', 'counter', ['count' => 4]);
+Route::omni('counter/{count}', Counter::class, ['count' => 4]);
 Route::get('counter/{count}', Counter::class);
 ```
 
@@ -224,11 +224,11 @@ These are intentional differences in the way Omni components behave compared to 
 
 ### Known Issues
 
-* None
+* Route model binding is not yet supported.
 
 ### Unknown Differences & Issues
 
-* Almost definitely
+* Almost definitely.
 
 ## Credits
 
