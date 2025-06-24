@@ -19,7 +19,7 @@ class Manager
 {
     const CLASS_REGEX = '/^(\s*(<\?php.*?)\?>)/is';
 
-    const TEMPLATE_REGEX = '/<template\s+(omni|omni\:wire)>(.*)<\/template>/is';
+    const TEMPLATE_REGEX = '/<template\s+(omni(?:\:wire)?)>(.*)<\/template>/is';
 
     const SCRIPT_REGEX = '/<style\s+bundle>(.*?)<\/style>/is';
 
@@ -41,9 +41,6 @@ class Manager
 
     public function decompose(string $code): string
     {
-        if (! preg_match(static::CLASS_REGEX, $code, $class)) {
-            return $code;
-        }
         if (! preg_match(static::TEMPLATE_REGEX, $code, $inner)) {
             return $code;
         }
@@ -54,7 +51,12 @@ class Manager
             return $code;
         }
 
-        $class = $class[2];
+        if (! preg_match(static::CLASS_REGEX, $code, $class)) {
+            $class = $this->makeClass($info);
+        } else {
+            $class = $class[2];
+        }
+
         $type = $inner[1];
         $inner = $inner[2];
         $outer = preg_replace([
@@ -356,5 +358,20 @@ class Manager
 
             public function render() {}
         };
+    }
+
+    protected function makeClass($info)
+    {
+        $namespace = Str::beforeLast($info->class, '\\');
+        $class = Str::afterLast($info->class, '\\');
+
+        return <<<PHP
+        <?php 
+        namespace {$namespace};
+
+        use JackSleight\LaravelOmni\Component;
+
+        class {$class} extends Component {}
+        PHP;
     }
 }
