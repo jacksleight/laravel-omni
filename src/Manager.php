@@ -160,7 +160,7 @@ class Manager
             $path = $this->nameToPath($name);
         }
 
-        if (! $name || ! $path || ! $class) {
+        if (! $name || ! $path || ! $class || ! file_exists($path)) {
             $this->cache[$name] = false;
             $this->cache[$path] = false;
             $this->cache[$class] = false;
