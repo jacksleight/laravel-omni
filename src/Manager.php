@@ -19,7 +19,7 @@ class Manager
 {
     const CLASS_REGEX = '/^(\s*(<\?php.*?)\?>)/is';
 
-    const TEMPLATE_REGEX = '/<template\s+(standard|livewire)>(.*)<\/template>/is';
+    const TEMPLATE_REGEX = '/<template\s+(omni|omni\:wire)>(.*)<\/template>/is';
 
     const SCRIPT_REGEX = '/<style\s+bundle>(.*?)<\/style>/is';
 
@@ -65,7 +65,7 @@ class Manager
 
         file_put_contents($info->classPath, trim($class));
 
-        if ($type === Component::LIVEWIRE) {
+        if ($type === 'omni:wire') {
             $empty = trim(preg_replace(static::TEMPLATE_REGEX, '', $outer)) === '';
             $outer = ! $empty
                 ? preg_replace(static::TEMPLATE_REGEX, '@livewire("'.$info->name.'", get_defined_vars())', $outer)

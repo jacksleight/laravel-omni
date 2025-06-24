@@ -5,8 +5,8 @@ import crypto from 'crypto';
 
 export default ({ views }) => {
 
-    const scriptsModuleId = 'script-bundle';
-    const stylesModuleId = 'style-bundle';
+    const scriptsModuleId = 'omni/scripts';
+    const stylesModuleId = 'omni/styles';
     const scriptModuleIdPrefix = scriptsModuleId + ':';
 
     const scriptRegex = /<script\s+bundle>(.*?)<\/script>/is;
