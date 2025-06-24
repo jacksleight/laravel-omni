@@ -167,18 +167,21 @@ Use attributes and slots as usual. If you're using them in Livewire components O
 To render any component in a Blade template use the `x-` syntax:
 
 ```blade
-<x-counter :count="4"> Content </x-counter>
+<x-counter :count="4">
+    Content
+</x-counter>
 ```
 
 ### Controllers
 
-To render any component from a controller action use the `omni` view macro or facade mount method:
+To render any component from a controller action use the `omni` view macro or `mount` method:
 
 ```php
 use App\Omni\Counter;
 use JackSleight\LaravelOmni\Omni;
 
 return view()->omni('counter', ['count' => 4]);
+return view()->omni(Counter::class, ['count' => 4]);
 return Omni::mount('counter', ['count' => 4]);
 return Omni::mount(Counter::class, ['count' => 4]);
 ```
