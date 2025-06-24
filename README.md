@@ -1,6 +1,6 @@
 # Omni
 
-Omni is a Laravel package and Vite plugin for building universal single-file Blade components, with or without Livewire features.
+Omni is a Laravel package and Vite plugin for building universal single-file Blade components that can easily opt in or out of Livewire features.
 
 > **⚠️ Experimental:** This package is experimental and could change. Some things may not behave as expected, see known [differences](#known-differences) and [issues](#known-issues).
 
