@@ -268,9 +268,8 @@ These are intentional differences in the way Omni components behave compared to 
 
 ## Troubleshooting
 
-### Error `Using $this when not in object context`
-
-You may be trying to use a computed Livewire property in a standard non-Livewire template.
+* **Error:** `Using $this when not in object context`  
+  You may be trying to use a computed Livewire property in a standard non-Livewire template.
 
 ## Credits
 
