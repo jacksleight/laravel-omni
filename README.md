@@ -224,6 +224,7 @@ These are intentional differences in the way Omni components behave compared to 
 
 * Template [helper functions](#helpers) are defined as protected methods with an attribute, not public methods. This is because public methods are reserved for Livewire actions.
 * Attributes are not exposed as variables in the template scope, they only exist in the attribute bag. This is to keep things tidy and avoid kebab-case variable names.
+* Conditionally rendering components by implementing `shouldRender` is not supported.
 
 ### Known Issues
 
