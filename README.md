@@ -25,7 +25,7 @@ All Omni components can:
 
 ## Creating Components
 
-To create an Omni component simply create a new view file anywhere in the views directory, they do not need to live in `components` or `livewire`. A basic standard component looks like this:
+To create an Omni component simply create a new view file anywhere in the views directory, they do not need to live in `/components` or `/livewire`. A basic standard component looks like this:
 
 ```blade
 <?php 
@@ -207,9 +207,9 @@ Omni components will execute in one of three modes depending on the type you dec
   Components that declare a `omni:wire` template and have no code outside of the `<template>` tag execute in Livewire mode, with full Livewire features. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
 
 * **Combined Mode**  
-  Components that declare a `omni:wire` template and have code outside of the `<template>` tag execute in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag is executed in standard mode, and then the part of the template inside the `<template>` tag is executed in Livewire mode.
+  Components that declare a `omni:wire` template and have code outside of the `<template>` tag execute in combined mode. Combined components are actually two instances of the same component. The layout part of the template outside the `<template>` tag is executed in standard mode, and then the part of the template inside the `<template>` tag is executed in Livewire mode.
 
-### Bundling Scripts & Styles
+## Bundling Scripts & Styles
 
 ...
 
@@ -224,11 +224,11 @@ These are intentional differences in the way Omni components behave compared to 
 
 ### Known Issues
 
-* None.
+* None
 
 ### Unknown Differences & Issues
 
-* Almost definitely.
+* Almost definitely
 
 ## Credits
 
