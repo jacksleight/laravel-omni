@@ -243,8 +243,8 @@ These are intentional differences in the way Omni components behave compared to 
 
 * Standard component protected properties will be filled from tag attributes or parameter arrays.
 * Standard component protected properties are available in the template scope.
-* Protected methods are available in the template scope.
-* Attributes are not exposed as variables in the template scope.
+* Protected methods are available in the template scope (but not exposed as actions).
+* Individual attributes are not set as variables in the template scope.
 * Conditionally rendering components by implementing `shouldRender` is not supported.
 
 ### Known Issues
