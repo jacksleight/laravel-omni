@@ -1,6 +1,6 @@
 # Omni
 
-Omni is a Laravel package and Vite plugin for building universal single-file standard Blade and Livewire components.
+Omni is a Laravel package and Vite plugin for building universal single-file Blade and Livewire components.
 
 The core goals of Omni are:
 
@@ -12,7 +12,7 @@ The core goals of Omni are:
 
 All Omni components can:
 
-- Be standard or Livewire components
+- Be standard Blade or Livewire components
 - Be mounted to a route as a full-page component 
 - Be rendered from a controller
 - Be rendered in a template using `x-` syntax  
