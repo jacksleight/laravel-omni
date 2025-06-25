@@ -33,9 +33,7 @@ To create an Omni component simply create a new view file anywhere in the views 
 <?php 
 namespace App\Omni;
 
-use JackSleight\LaravelOmni\Component;
-
-class Counter extends Component
+class Counter extends OmniComponent
 {
     protected int $count = 0;
 } ?>
@@ -61,9 +59,7 @@ And to make it a Livewire component with a layout:
 <?php 
 namespace App\Omni;
 
-use JackSleight\LaravelOmni\Component;
-
-class Counter extends Component
+class Counter extends OmniComponent
 {
     public int $count = 0; /* Make this public */
 

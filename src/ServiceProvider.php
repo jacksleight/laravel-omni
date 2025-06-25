@@ -20,11 +20,19 @@ class ServiceProvider extends BaseServiceProvider
     public function boot()
     {
         $this
+            ->bootAlias()
             ->bootAutoload()
             ->bootComponents()
             ->bootSynths()
             ->bootMacros()
             ->bootPaths();
+    }
+
+    protected function bootAlias()
+    {
+        AliasLoader::getInstance()->alias('OmniComponent', Component::class);
+
+        return $this;
     }
 
     protected function bootAutoload()
