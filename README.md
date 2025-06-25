@@ -191,10 +191,10 @@ Therefore it's reccomended to define standard component properties as protected 
 Omni components will execute in one of three modes depending on the `<template>` tag you declare and the template structure.
 
 * **Standard Mode**  
-  All components that declare a `omni` template execute in standard mode. They support `mount` and `rendering` lifecycle hooks. All public and protected properties will be filled automatically and are avaliable in the template scope.
+  All components that declare a `omni` template execute in standard mode. They support `mount` and `rendering` lifecycle hooks. Public and protected properties will be filled automatically and are avaliable in the template scope.
 
 * **Livewire Mode**  
-  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag execute in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks). All public properties will be filled automatically are avaliable in the template scope. Protected properties should be set in `mount` and provided to the template via `with`.
+  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag execute in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks). Public properties will be filled automatically are avaliable in the template scope. Protected properties should be set in `mount` and provided to the template via `with`.
 
 * **Combined Mode**  
   Components that declare a `omni:wire` template and have code outside of the `<template>` tag execute in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag is executed in standard mode, and then the part of the template inside the `<template>` tag is executed in Livewire mode.
@@ -241,7 +241,7 @@ import 'omni/scripts';
 
 These are intentional differences in the way Omni components behave compared to normal Blade or Livewire components.
 
-* Standard component protected properties can be filled from tag attributes or parameter arrays.
+* Standard component protected properties will be filled from tag attributes or parameter arrays.
 * Standard component protected properties are available in the template scope. They are not exposed on the client side.
 * Protected methods are available in the template scope. They are not exposed on the client side.
 * Attributes are not exposed as variables in the template scope.
