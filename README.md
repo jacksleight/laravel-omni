@@ -179,11 +179,11 @@ Route::omni('counter/{count}', Counter::class, ['count' => 4]);
 Route::get('counter/{count}', Counter::class);
 ```
 
-### Property Visibility
+## Property Visibility
 
 Public properties have special meaning in Livewire components, so Omni needs a way to define properties for standard components without the risk of them being exposed by mistake when switching a standard component to Livewire. Therefore it's best practive to define standard component properties as protected instead of public, and only switch them to public when you need to. Protected properties are avalibale in the standard component template scope.
 
-### Component Execution
+## Component Execution
 
 Omni components will execute in one of three modes depending on the `<template>` tag you declare and the template structure.
 
