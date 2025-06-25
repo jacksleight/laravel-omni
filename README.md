@@ -242,8 +242,8 @@ import 'omni/scripts';
 These are intentional differences in the way Omni components behave compared to normal Blade or Livewire components.
 
 * Standard component protected properties will be filled from tag attributes or parameter arrays.
-* Standard component protected properties are available in the template scope. They are not exposed on the client side.
-* Protected methods are available in the template scope. They are not exposed on the client side.
+* Standard component protected properties are available in the template scope.
+* Protected methods are available in the template scope.
 * Attributes are not exposed as variables in the template scope.
 * Conditionally rendering components by implementing `shouldRender` is not supported.
 
