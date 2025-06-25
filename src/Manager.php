@@ -19,6 +19,8 @@ class Manager
 {
     const CLASS_REGEX = '/^(\s*(<\?php.*?)\?>)/is';
 
+    const DEFINITION_REGEX = '/class\s+([^\s]+)\s+\{/is';
+
     const TEMPLATE_REGEX = '/<template\s+(omni(?:\:wire)?)>(.*)<\/template>/is';
 
     const SCRIPT_REGEX = '/<style\s+omni>(.*?)<\/style>/is';
@@ -54,7 +56,7 @@ class Manager
         if (! preg_match(static::CLASS_REGEX, $code, $class)) {
             $class = $this->makeClass($info);
         } else {
-            $class = $class[2];
+            $class = preg_replace(static::DEFINITION_REGEX, 'class $1 extends \\JackSleight\\LaravelOmni\\Component {', $class[2]);
         }
 
         $type = $inner[1];
@@ -369,9 +371,7 @@ class Manager
         <?php 
         namespace {$namespace};
 
-        use JackSleight\LaravelOmni\Component;
-
-        class {$class} extends Component {}
+        class {$class} extends \JackSleight\LaravelOmni\Component {}
         PHP;
     }
 }

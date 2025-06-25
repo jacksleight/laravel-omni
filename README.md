@@ -33,7 +33,7 @@ To create an Omni component simply create a new view file anywhere in the views 
 <?php 
 namespace App\Omni;
 
-class Counter extends \OmniComponent
+class Counter
 {
     protected int $count = 0;
 } ?>
@@ -59,7 +59,7 @@ And to make it a Livewire component with a layout:
 <?php 
 namespace App\Omni;
 
-class Counter extends \OmniComponent
+class Counter
 {
     public int $count = 0; /* Make this public */
 

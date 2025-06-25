@@ -2,7 +2,6 @@
 
 namespace JackSleight\LaravelOmni;
 
-use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
@@ -20,19 +19,11 @@ class ServiceProvider extends BaseServiceProvider
     public function boot()
     {
         $this
-            ->bootAlias()
             ->bootAutoload()
             ->bootComponents()
             ->bootSynths()
             ->bootMacros()
             ->bootPaths();
-    }
-
-    protected function bootAlias()
-    {
-        AliasLoader::getInstance()->alias('OmniComponent', Component::class);
-
-        return $this;
     }
 
     protected function bootAutoload()
