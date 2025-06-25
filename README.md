@@ -6,9 +6,12 @@ The core goals of Omni are:
 
 - A single type of view, everything’s a component
 - A single API for defining all components
-- A single syntax for mounting and rendering all components
-- A single directory structure for organising all components
+- A single syntax for including all components
+- A single directory structure for all components
 - A single file for all component concerns (logic, template, styles and scripts)
+
+> [!IMPORTANT]
+> I made this because I want to implement views as describe above, but this package does not get in the way of the usual view approaches. You can still render out plain view files, create normal Blade and Livewire components stored in their default locations, and use all the various include directives. If any of that breaks it's a bug.
 
 All Omni components can:
 
@@ -23,7 +26,9 @@ All Omni components can:
 - Extend other Omni components
 - Live in any view directory
 
-> **⚠️ Experimental:** This package is experimental and could change. Some things may not behave as expected, see known [differences](#known-differences) and [issues](#known-issues).
+> [!WARNING]
+> This package is experimental and could change. Some things may not behave as expected, see known [differences](#known-differences) and [issues](#known-issues).
+
 
 ## Creating Components
 
