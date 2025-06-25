@@ -4,18 +4,30 @@ namespace JackSleight\LaravelOmni\Support;
 
 use Illuminate\Support\Arr;
 use Illuminate\View\ComponentAttributeBag;
+use JackSleight\LaravelOmni\Component;
+use Livewire\Component as LivewireComponent;
 use ReflectionClass;
 use ReflectionProperty;
 
 class Utils
 {
-    public static function getPublicPropertyNames(string $class)
+    public static function getPropertyNames(string $class)
     {
         $reflection = new ReflectionClass($class);
-        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
+        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED);
 
-        return collect($properties)
-            ->map(fn ($property) => $property->getName())->toArray();
+        $ignoreClasses = [
+            Component::class,
+            LivewireComponent::class,
+        ];
+
+        $return = collect($properties)
+            ->filter(fn ($property) => ! in_array($property->getDeclaringClass()->getName(), $ignoreClasses))
+            ->map(fn ($property) => $property->getName())
+            ->merge(['attrs', 'slot'])
+            ->all();
+
+        return $return;
     }
 
     public static function getMethodArgumentNames(string $class, $method)
@@ -30,7 +42,7 @@ class Utils
 
     public static function resolveProps($class, $data = [])
     {
-        $names = Utils::getPublicPropertyNames($class);
+        $names = Utils::getPropertyNames($class);
 
         $attributes = $data['attributes'] ?? new ComponentAttributeBag;
 

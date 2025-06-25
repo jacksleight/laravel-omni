@@ -2,9 +2,11 @@
 
 namespace JackSleight\LaravelOmni;
 
+use Illuminate\Database\Eloquent\Model;
 use JackSleight\LaravelOmni\Concerns\HasAttributes;
 use JackSleight\LaravelOmni\Concerns\HasHelpers;
 use JackSleight\LaravelOmni\Concerns\HasSlot;
+use JackSleight\LaravelOmni\Support\Utils;
 use Livewire\Component as LivewireComponent;
 
 class Component extends LivewireComponent
@@ -31,6 +33,34 @@ class Component extends LivewireComponent
             $this->helpers(),
             $this->with(),
         );
+    }
+
+    public function all()
+    {
+        $names = Utils::getPropertyNames(static::class);
+
+        return collect($names)
+            ->mapWithKeys(function ($name) {
+                return [$name => $this->{$name} ?? null];
+            })
+            ->all();
+    }
+
+    public function fill($values)
+    {
+        if ($values instanceof Model) {
+            $values = $values->toArray();
+        }
+
+        $names = Utils::getPropertyNames(static::class);
+
+        dump($names);
+
+        collect($values)
+            ->only($names)
+            ->each(function ($value, $name) {
+                $this->{$name} = $value;
+            });
     }
 
     protected function with()

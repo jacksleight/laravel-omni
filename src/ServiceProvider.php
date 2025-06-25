@@ -2,6 +2,7 @@
 
 namespace JackSleight\LaravelOmni;
 
+use Illuminate\Foundation\AliasLoader;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;

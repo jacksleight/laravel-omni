@@ -25,7 +25,7 @@ class Manager
 
     const STYLE_REGEX = '/<script\s+omni>(.*?)<\/script>/is';
 
-    const TEMPLATE_EMPTY = '<?php /**OMNI_TEMPLATE_EMPTY**/ ?>';
+    const TEMPLATE_NONE = '<!-- __OMNI_TEMPLATE_NONE__ -->';
 
     protected array $cache = [];
 
@@ -71,7 +71,7 @@ class Manager
             $empty = trim(preg_replace(static::TEMPLATE_REGEX, '', $outer)) === '';
             $outer = ! $empty
                 ? preg_replace(static::TEMPLATE_REGEX, '@livewire("'.$info->name.'", get_defined_vars())', $outer)
-                : static::TEMPLATE_EMPTY;
+                : static::TEMPLATE_NONE;
             file_put_contents($info->innerPath, $inner);
         } else {
             $outer = preg_replace(static::TEMPLATE_REGEX, $inner, $outer);
@@ -213,7 +213,7 @@ class Manager
 
         if (! file_exists($info->innerPath)) {
             $info->mode = Component::STANDARD;
-        } elseif (Str::contains(file_get_contents($info->outerPath), static::TEMPLATE_EMPTY)) {
+        } elseif (Str::contains(file_get_contents($info->outerPath), static::TEMPLATE_NONE)) {
             $info->mode = Component::LIVEWIRE;
         } else {
             $info->mode = Component::COMBINED;

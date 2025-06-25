@@ -1,14 +1,13 @@
 # Omni
 
-Omni is a Laravel package and Vite plugin for building universal single-file Blade components that can easily opt in or out of Livewire features.
-
-> **⚠️ Experimental:** This package is experimental and could change. Some things may not behave as expected, see known [differences](#known-differences) and [issues](#known-issues).
+Omni is a Laravel package and Vite plugin for building universal single-file Blade/Livewire components.
 
 The core goals of Omni are:
 
-- A single API for defining components
-- A single syntax for mounting and rendering components
-- A single directory structure for organising components
+- A single type of view, everything’s a component
+- A single API for defining all components
+- A single syntax for mounting and rendering all components
+- A single directory structure for organising all components
 - A single file for all component concerns (logic, template, styles and scripts)
 
 All Omni components can:
@@ -17,15 +16,18 @@ All Omni components can:
 - Be mounted to a route as a full-page component 
 - Be rendered from a controller
 - Be rendered in a template using `x-` syntax  
-- Use layouts, slots, and attribute bags
+- Pull layouts into their templates
+- Use slots and attribute bags
 - Define template helper functions
 - Include JS and CSS that’s bundled by Vite
 - Extend other Omni components
 - Live in any view directory
 
+> **⚠️ Experimental:** This package is experimental and could change. Some things may not behave as expected, see known [differences](#known-differences) and [issues](#known-issues).
+
 ## Creating Components
 
-To create an Omni component simply create a new view file anywhere in the views directory, they do not need to live in `/components` or `/livewire`.
+To create an Omni component simply create a new view file anywhere in the views directory.
 
 An Omni component looks like this:
 
@@ -37,7 +39,7 @@ use JackSleight\LaravelOmni\Component;
 
 class Counter extends Component
 {
-    public int $count = 0;
+    protected int $count = 0;
 } ?>
 
 <template omni>
@@ -65,7 +67,7 @@ use JackSleight\LaravelOmni\Component;
 
 class Counter extends Component
 {
-    public int $count = 0;
+    public int $count = 0; {{-- Make it public --}}
 
     public function increment()
     {
@@ -74,7 +76,7 @@ class Counter extends Component
 } ?>
 
 <x-layout>
-    <template omni:wire> {{-- Make it Livewire! --}}
+    <template omni:wire> {{-- Enable Livewire --}}
         <div>
             {{ $count }}
             <button wire:click="increment">+</button>
@@ -126,26 +128,6 @@ protected function with()
         // ...
     ];
 }
-```
-
-### Helpers
-
-To create helper functions that you can call from the template define `protected` methods with the `#[Helper]` attribute:
-
-```php
-use JackSleight\LaravelOmni\Attributes\Helper;
-
-#[Helper]
-protected function random()
-{
-    // ...
-}
-```
-
-```blade
-<div>
-    {{ $random() }}
-</div>
 ```
 
 ### Attributes & Slots
@@ -254,8 +236,10 @@ import 'omni/scripts';
 
 These are intentional differences in the way Omni components behave compared to normal Blade or Livewire components.
 
-* Template [helper functions](#helpers) are defined as protected methods with an attribute, not public methods. This is because public methods are reserved for Livewire actions.
-* Attributes are not exposed as variables in the template scope, they only exist in the attribute bag. This is to keep things tidy and avoid kebab-case variable names.
+* Standard component protected properties can be filled from tag attributes or data arrays.
+* Standard component protected properties are available to the template. They are not exposed on the client side.
+* Protected methods are available to the server side template. They are not exposed on the client side.
+* Attributes are not exposed as variables in the template scope.
 * Conditionally rendering components by implementing `shouldRender` is not supported.
 
 ### Known Issues
