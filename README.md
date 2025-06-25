@@ -55,7 +55,7 @@ class Counter extends Component
 </script>
 ```
 
-And to make it a Livewire component and add a layout:
+And to make it a Livewire component with a layout:
 
 ```blade
 <?php 
@@ -65,7 +65,7 @@ use JackSleight\LaravelOmni\Component;
 
 class Counter extends Component
 {
-    public int $count = 0; {{-- Make this public --}}
+    public int $count = 0; /* Make this public */
 
     public function increment()
     {
@@ -179,15 +179,19 @@ Route::omni('counter/{count}', Counter::class, ['count' => 4]);
 Route::get('counter/{count}', Counter::class);
 ```
 
+### Property Visibility
+
+Public properties have special meaning in Livewire components, so Omni needs a way to define properties for standard components without the risk of them being exposed by mistake when switching a standard component to Livewire. Therefore it's best practive to define standard component properties as protected instead of public, and only switch them to public when you need to. Protected properties are avalibale in the standard component template scope.
+
 ### Component Execution
 
 Omni components will execute in one of three modes depending on the `<template>` tag you declare and the template structure.
 
 * **Standard Mode**  
-  All components that declare a `omni` template execute in standard mode. They support `mount` and `rendering` lifecycle hooks.
+  All components that declare a `omni` template execute in standard mode. They support `mount` and `rendering` lifecycle hooks. All public and protected properties are avalibale in the template scope. All protected methods are avalibale in the template scope.
 
 * **Livewire Mode**  
-  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag execute in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
+  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag execute in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks). All public properties are avalibale in the template scope. All protected methods are avalibale in the template scope.
 
 * **Combined Mode**  
   Components that declare a `omni:wire` template and have code outside of the `<template>` tag execute in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag is executed in standard mode, and then the part of the template inside the `<template>` tag is executed in Livewire mode.
