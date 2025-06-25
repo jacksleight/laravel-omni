@@ -1,6 +1,6 @@
 # Omni
 
-Omni is a Laravel package and Vite plugin for building universal single-file Blade/Livewire components.
+Omni is a Laravel package and Vite plugin for building universal single-file standard Blade and Livewire components.
 
 The core goals of Omni are:
 
@@ -12,7 +12,7 @@ The core goals of Omni are:
 
 All Omni components can:
 
-- Opt in or out of Livewire features
+- Be standard or Livewire components
 - Be mounted to a route as a full-page component 
 - Be rendered from a controller
 - Be rendered in a template using `x-` syntax  
@@ -27,9 +27,7 @@ All Omni components can:
 
 ## Creating Components
 
-To create an Omni component simply create a new view file anywhere in the views directory.
-
-An Omni component looks like this:
+To create an Omni component simply create a new view file anywhere in the views directory. They looks like this:
 
 ```blade
 <?php 
@@ -57,7 +55,7 @@ class Counter extends Component
 </script>
 ```
 
-If you want Livewire features and a layout:
+And to make it a Livewire component and add a layout:
 
 ```blade
 <?php 
@@ -67,7 +65,7 @@ use JackSleight\LaravelOmni\Component;
 
 class Counter extends Component
 {
-    public int $count = 0; {{-- Make it public --}}
+    public int $count = 0; {{-- Make this public --}}
 
     public function increment()
     {
@@ -87,7 +85,7 @@ class Counter extends Component
 
 ### Name, Path and Class
 
-An Omni component's name, path and class map directly to one another and must all match. The class namespace must include `Omni`. The part before `Omni` is the component prefix, and the part after is the component name, for example:
+An Omni component's name, path and class must all match. The class namespace must include `Omni`. The part before `Omni` is the component prefix, and the part after is the component name, for example:
 
 ```
 Name:  counter
@@ -103,15 +101,15 @@ A blank name prefix maps to the `App` class namespace.
 
 ### Lifecycle
 
-Livewire components run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks), non-Livewire components support the `mount` and `rendering` lifecycle hooks:
+Livewire components run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks), standard components support the `mount` and `rendering` lifecycle hooks:
 
 ```php
-protected function mount($value)
+public function mount($value)
 {
     // ...
 }
 
-protected function rendering($view)
+public function rendering($view)
 {
     // ...
 }
@@ -236,9 +234,9 @@ import 'omni/scripts';
 
 These are intentional differences in the way Omni components behave compared to normal Blade or Livewire components.
 
-* Standard component protected properties can be filled from tag attributes or data arrays.
-* Standard component protected properties are available to the template. They are not exposed on the client side.
-* Protected methods are available to the server side template. They are not exposed on the client side.
+* Standard component protected properties can be filled from tag attributes or parameter arrays.
+* Standard component protected properties are available in the template scope. They are not exposed on the client side.
+* Protected methods are available in the template scope. They are not exposed on the client side.
 * Attributes are not exposed as variables in the template scope.
 * Conditionally rendering components by implementing `shouldRender` is not supported.
 
