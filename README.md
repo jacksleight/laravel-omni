@@ -194,7 +194,7 @@ Omni components run in one of three modes depending on the `<template>` tag you 
   All components that declare a `omni` template run in standard mode. They support `mount` and `rendering` lifecycle hooks. Public and protected properties will be filled automatically and are avaliable in the template scope.
 
 * **Livewire Mode**  
-  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag run in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks). Public properties will be filled automatically are avaliable in the template scope. Protected properties should be set in `mount` and provided to the template via `with`.
+  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag run in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks). Public properties will be filled automatically and are avaliable in the template scope. Protected properties should be set in `mount` and provided to the template via `with`.
 
 * **Combined Mode**  
   Components that declare a `omni:wire` template and have code outside of the `<template>` tag run in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag runs in standard mode, and then the part of the template inside the `<template>` tag runs in Livewire mode.
