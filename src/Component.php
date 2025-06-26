@@ -30,7 +30,6 @@ class Component extends LivewireComponent
     {
         return array_merge(
             $this->all(),
-            $this->helpers(),
             $this->with(),
         );
     }
@@ -46,15 +45,17 @@ class Component extends LivewireComponent
             ->all();
     }
 
-    public function fill($values)
+    public function fill($values, $standard = false)
     {
+        if (! $standard) {
+            return parent::fill($values);
+        }
+
         if ($values instanceof Model) {
             $values = $values->toArray();
         }
 
         $names = Utils::getPropertyNames(static::class);
-
-        dump($names);
 
         collect($values)
             ->only($names)
@@ -68,14 +69,14 @@ class Component extends LivewireComponent
         return [];
     }
 
-    public function render($outer = false)
+    public function render($standard = false)
     {
         $info = Omni::prepare(class: static::class);
 
-        if ($outer) {
-            return view($info->name, $this->data());
+        if (! $standard) {
+            return view()->file($info->innerPath, $this->data());
         }
 
-        return view()->file($info->innerPath, $this->data());
+        return view($info->name, $this->data());
     }
 }

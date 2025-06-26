@@ -21,13 +21,12 @@ class Utils
             LivewireComponent::class,
         ];
 
-        $return = collect($properties)
-            ->filter(fn ($property) => ! in_array($property->getDeclaringClass()->getName(), $ignoreClasses))
+        return collect($properties)
+            ->reject(fn ($property) => in_array($property->getDeclaringClass()->getName(), $ignoreClasses))
+            ->reject(fn ($property) => $property->isStatic())
             ->map(fn ($property) => $property->getName())
             ->merge(['attrs', 'slot'])
             ->all();
-
-        return $return;
     }
 
     public static function getMethodArgumentNames(string $class, $method)

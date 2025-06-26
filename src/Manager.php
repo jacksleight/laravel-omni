@@ -121,7 +121,7 @@ class Manager
         }
 
         $component = app()->make($info->class);
-        $component->fill($props);
+        $component->fill($props, true);
 
         Utils::callHooks($component, 'mount', $props);
         $view = $component->render(true);
