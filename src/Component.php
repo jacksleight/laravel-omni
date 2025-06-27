@@ -17,6 +17,8 @@ class Component extends LivewireComponent
 
     const COMBINED = 'combined';
 
+    protected $__mode = self::LIVEWIRE;
+
     use HasAttributes;
     use HasHelpers;
     use HasSlot;
@@ -26,28 +28,14 @@ class Component extends LivewireComponent
         return Omni::mount(static::class, request()->route()->parameters());
     }
 
-    protected function data()
+    protected function setMode($mode)
     {
-        return array_merge(
-            $this->all(),
-            $this->with(),
-        );
+        $this->__mode = $mode;
     }
 
-    public function all()
+    public function fill($values)
     {
-        $names = Utils::getPropertyNames(static::class);
-
-        return collect($names)
-            ->mapWithKeys(function ($name) {
-                return [$name => $this->{$name} ?? null];
-            })
-            ->all();
-    }
-
-    public function fill($values, $standard = false)
-    {
-        if (! $standard) {
+        if ($this->__mode === self::LIVEWIRE) {
             return parent::fill($values);
         }
 
@@ -55,7 +43,7 @@ class Component extends LivewireComponent
             $values = $values->toArray();
         }
 
-        $names = Utils::getPropertyNames(static::class);
+        $names = Utils::getPropertyNames(static::class, $this->__mode === self::STANDARD);
 
         collect($values)
             ->only($names)
@@ -64,19 +52,35 @@ class Component extends LivewireComponent
             });
     }
 
+    public function all()
+    {
+        $names = Utils::getPropertyNames(static::class, $this->__mode === self::STANDARD);
+
+        return collect($names)
+            ->mapWithKeys(function ($name) {
+                return [$name => $this->{$name} ?? null];
+            })
+            ->all();
+    }
+
     protected function with()
     {
         return [];
     }
 
-    public function render($standard = false)
+    public function render()
     {
         $info = Omni::prepare(class: static::class);
 
-        if (! $standard) {
-            return view()->file($info->innerPath, $this->data());
+        $data = array_merge(
+            $this->all(),
+            $this->with(),
+        );
+
+        if ($this->__mode === self::LIVEWIRE) {
+            return view()->file($info->innerPath, $data);
         }
 
-        return view($info->name, $this->data());
+        return view($info->name, $data);
     }
 }

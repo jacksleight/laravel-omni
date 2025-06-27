@@ -15,6 +15,8 @@ use Illuminate\View\Component as ViewComponent;
 use JackSleight\LaravelOmni\Support\Utils;
 use Livewire\Livewire;
 
+use function Livewire\invade;
+
 class Manager
 {
     const NAMESPACE_REGEX = '/namespace\s+[\w\\\]+\\\Omni(\\\[\w\\\]+)?\s*;/is';
@@ -45,7 +47,7 @@ class Manager
 
     public function decompose(string $code): string
     {
-        $omni = preg_match(static::NAMESPACE_REGEX, $code) || preg_match(static::TEMPLATE_REGEX, $code, $inner);
+        $omni = preg_match(static::TEMPLATE_REGEX, $code, $inner) || preg_match(static::NAMESPACE_REGEX, $code);
         if (! $omni) {
             return $code;
         }
@@ -124,10 +126,11 @@ class Manager
         }
 
         $component = app()->make($info->class);
-        $component->fill($props, true);
+        invade($component)->setMode(Component::STANDARD);
+        $component->fill($props);
 
         Utils::callHooks($component, 'mount', $props);
-        $view = $component->render(true);
+        $view = $component->render();
         Utils::callHooks($component, 'rendering', ['view' => $view]);
 
         return $view;

@@ -11,10 +11,14 @@ use ReflectionProperty;
 
 class Utils
 {
-    public static function getPropertyNames(string $class)
+    public static function getPropertyNames(string $class, $protected)
     {
+        $visibility = $protected
+            ? (ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED)
+            : ReflectionProperty::IS_PUBLIC;
+
         $reflection = new ReflectionClass($class);
-        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED);
+        $properties = $reflection->getProperties($visibility);
 
         $ignoreClasses = [
             Component::class,
@@ -39,9 +43,9 @@ class Utils
             ->toArray();
     }
 
-    public static function resolveProps($class, $data = [])
+    public static function resolveProps($class, $data)
     {
-        $names = Utils::getPropertyNames($class);
+        $names = Utils::getPropertyNames($class, true);
 
         $attributes = $data['attributes'] ?? new ComponentAttributeBag;
 
