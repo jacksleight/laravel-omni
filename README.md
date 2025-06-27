@@ -11,7 +11,7 @@ The core goals of Omni are:
 - A single file for all component concerns (logic, template, styles and scripts)
 
 > [!IMPORTANT]
-> I made this because I want to implement views as describe above, but this package does not get in the way of the usual view approaches. You can still render plain view files, create normal Blade and Livewire components stored in their default locations, and use all the various directives. If any of that breaks it's a bug.
+> I built this because I want to implement views as describe above, but this package does not get in the way of the usual view approaches. You can still render plain view files, create normal Blade and Livewire components stored in their default locations, and use all the various directives. If any of that breaks it's a bug.
 
 All Omni components can:
 
@@ -198,6 +198,10 @@ Omni components run in one of three modes depending on the `<template>` tag you 
 
 * **Combined Mode**  
   Components that declare a `omni:wire` template and have code outside of the `<template>` tag run in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag runs in standard mode, and then the part of the template inside the `<template>` tag runs in Livewire mode.
+
+## Component Detection
+
+Any view that contains an Omni template tag or namespace declaration is considered an Omni component. If you don't need the class it can be omitted so long as you have a valid template tag. If you're building a standard component and dont need seperate style and script blocks you can omit the template tag so long as you have a valid namespace declaration.
 
 ## Bundling Scripts & Styles
 

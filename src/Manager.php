@@ -17,6 +17,8 @@ use Livewire\Livewire;
 
 class Manager
 {
+    const NAMESPACE_REGEX = '/namespace\s+[\w\\\]+\\\Omni(\\\[\w\\\]+)?\s*;/is';
+
     const CLASS_REGEX = '/^(\s*(<\?php.*?)\?>)/is';
 
     const DEFINITION_REGEX = '/class\s+([^\s]+)\s+\{/is';
@@ -43,7 +45,8 @@ class Manager
 
     public function decompose(string $code): string
     {
-        if (! preg_match(static::TEMPLATE_REGEX, $code, $inner)) {
+        $omni = preg_match(static::NAMESPACE_REGEX, $code) || preg_match(static::TEMPLATE_REGEX, $code, $inner);
+        if (! $omni) {
             return $code;
         }
 
@@ -59,8 +62,8 @@ class Manager
             $class = preg_replace(static::DEFINITION_REGEX, 'class $1 extends \\JackSleight\\LaravelOmni\\Component {', $class[2]);
         }
 
-        $type = $inner[1];
-        $inner = $inner[2];
+        $type = $inner[1] ?? 'omni';
+        $inner = $inner[2] ?? '';
         $outer = preg_replace([
             static::CLASS_REGEX,
             static::SCRIPT_REGEX,
