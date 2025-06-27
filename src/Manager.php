@@ -288,7 +288,6 @@ class Manager
 
         $base = $group['path'];
         $path = Str::of($name)
-            ->before('.index')
             ->replace('.', '/')
             ->toString();
 
