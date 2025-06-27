@@ -23,7 +23,8 @@ class ServiceProvider extends BaseServiceProvider
             ->bootComponents()
             ->bootSynths()
             ->bootMacros()
-            ->bootPaths();
+            ->bootPaths()
+            ->bootCommands();
     }
 
     protected function bootAutoload()
@@ -62,6 +63,17 @@ class ServiceProvider extends BaseServiceProvider
     protected function bootPaths()
     {
         Blade::anonymousComponentPath(resource_path('views'));
+
+        return $this;
+    }
+
+    protected function bootCommands()
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Commands\MakeOmni::class,
+            ]);
+        }
 
         return $this;
     }
