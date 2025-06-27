@@ -32,7 +32,11 @@ All Omni components can:
 
 ## Creating Components
 
-To create an Omni component simply create a new view file anywhere in the views directory. They looks like this:
+You can create Omni components manually or using the `make:omni` command.
+
+### Manual Creation
+
+To create an Omni component manually, simply create a new view file anywhere in the views directory. They looks like this:
 
 ```blade
 <?php 
@@ -100,6 +104,15 @@ Class: ShopApp\Omni\Products\List
 
 A blank name prefix maps to the `App` class namespace.
 
+### Using the Make Command
+
+You can also create a new Omni component using the `make:omni` Artisan command:
+
+```bash
+php artisan make:omni
+php artisan make:omni counter
+php artisan make:omni counter --wire
+```
 ### Lifecycle
 
 Livewire components run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks), standard components support the `mount` and `rendering` lifecycle hooks:
