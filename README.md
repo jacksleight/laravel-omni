@@ -11,7 +11,7 @@ The core goals of Omni are:
 - A single file for all component concerns (logic, template, styles and scripts)
 
 > [!IMPORTANT]
-> I built this because I want to implement views as describe above, but this package does not get in the way of the usual view approaches. You can still render plain view files, create normal Blade and Livewire components stored in their default locations, and use all the various directives. If any of that breaks it's a bug.
+> I built this because I want to implement views as describe above, but this package does not get in the way of the usual view approaches. You can still render plain view files, create normal Blade and Livewire components stored in their usual locations, and use all the various Blade include directives.
 
 All Omni components can:
 
