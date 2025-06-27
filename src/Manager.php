@@ -267,7 +267,6 @@ class Manager
             ->before('.blade.php')
             ->trim('/')
             ->replace('/', '.')
-            ->before('.index')
             ->toString();
 
         return $hash.'::'.$name;
