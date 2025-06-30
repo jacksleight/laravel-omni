@@ -108,7 +108,11 @@ class Manager
 
     public function resolveStandard(string $class, array $attributes)
     {
-        $info = $this->prepare(name: $attributes['view'] ?? null);
+        if (!isset($attributes['view'])) {
+            return app()->make($class, $attributes);
+        }
+
+        $info = $this->prepare(name: $attributes['view']);
         if (! $info) {
             return app()->make($class, $attributes);
         }
@@ -232,7 +236,7 @@ class Manager
     public function prepare(?string $name = null, ?string $path = null, ?string $class = null): object|false
     {
         if (! $name && ! $path && ! $class) {
-            throw new \InvalidArgumentException('A name, path, or is required.');
+            throw new \InvalidArgumentException('A name, path, or class is required.');
         }
 
         $key = $name ?? $path ?? $class;
