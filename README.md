@@ -265,7 +265,6 @@ These are intentional differences in the way Omni components behave compared to 
 
 ### Known Issues
 
-* Route model binding is not yet supported.
 * Directory component paths (`counter` -> `/views/counter/counter.blade.php`) are not yet supported.
 
 ### Unknown Differences & Issues

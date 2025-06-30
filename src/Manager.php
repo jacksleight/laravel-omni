@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View as ViewContract;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Blade;
@@ -13,7 +14,9 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\View\Component as ViewComponent;
 use JackSleight\LaravelOmni\Support\Utils;
+use Livewire\Drawer\ImplicitRouteBinding;
 use Livewire\Livewire;
+use RuntimeException;
 
 use function Livewire\invade;
 
@@ -39,12 +42,10 @@ class Manager
 
     public function path(string $path, ?string $prefix = null)
     {
-        $prefixHash = hash('xxh128', $prefix ?: $path);
-
         $this->paths[] = [
             'path' => $path,
             'prefix' => $prefix,
-            'prefixHash' => $prefixHash,
+            'hash' => hash('xxh128', $prefix ?: $path),
         ];
 
         Blade::anonymousComponentPath($path, $prefix);
@@ -127,11 +128,11 @@ class Manager
         return $info->class;
     }
 
-    public function mount(string $name, array $data = []): ViewContract|Htmlable|null
+    public function mount(string $name, array $data = []): ViewContract|Htmlable|false
     {
         $info = $this->prepare(name: $name);
         if (! $info) {
-            return null;
+            throw new RuntimeException("Component [{$name}] not found.");
         }
 
         $props = Utils::resolveProps($info->class, $data);
@@ -154,10 +155,28 @@ class Manager
     public function route(string $uri, string $name, array $data = []): Route
     {
         return app(Registrar::class)
-            ->get($uri, fn (Request $request) => $this->mount($name, [
-                ...$data,
-                ...$request->route()->parameters(),
-            ]));
+            ->get($uri, fn (Request $request) => $this->routeMount($request, $name, $data));
+    }
+
+    protected function routeMount(Request $request, string $name, array $data = [])
+    {
+        $info = $this->prepare(name: $name);
+        if (! $info) {
+            throw new RuntimeException("Component [{$name}] not found.");
+        }
+
+        $route = $request->route();
+        try {
+            $params = (new ImplicitRouteBinding(app()))
+                ->resolveAllParameters($route, new ($info->class));
+        } catch (ModelNotFoundException $exception) {
+            if (method_exists($route, 'getMissing') && $route->getMissing()) {
+                abort($route->getMissing()(request()));
+            }
+            throw $exception;
+        }
+
+        return $this->mount($name, [...$data, ...$params]);
     }
 
     public function identify(?string $name = null, ?string $path = null, ?string $class = null): object|false
@@ -251,13 +270,13 @@ class Manager
             ? explode('::', $name)
             : [null, $name];
 
-        $group = collect(app('blade.compiler')->getAnonymousComponentPaths())
-            ->first(fn ($group) => $group['prefix'] === $prefix || $group['prefixHash'] === $prefix);
+        $group = collect($this->paths)
+            ->first(fn ($group) => $group['prefix'] === $prefix || $group['hash'] === $prefix);
         if (! $group) {
             return false;
         }
 
-        return $group['prefixHash'].'::'.$name;
+        return $group['hash'].'::'.$name;
     }
 
     protected function pathToName(string|false $path): string|false
@@ -266,13 +285,13 @@ class Manager
             return false;
         }
 
-        $group = collect(app('blade.compiler')->getAnonymousComponentPaths())
+        $group = collect($this->paths)
             ->first(fn ($group) => Str::startsWith($path, $group['path']));
         if (! $group) {
             return false;
         }
 
-        $hash = $group['prefixHash'];
+        $hash = $group['hash'];
         $name = Str::of($path)
             ->after($group['path'])
             ->before('.blade.php')
@@ -290,8 +309,8 @@ class Manager
         }
 
         [$hash, $name] = explode('::', $name);
-        $group = collect(app('blade.compiler')->getAnonymousComponentPaths())
-            ->first(fn ($group) => $group['prefixHash'] === $hash);
+        $group = collect($this->paths)
+            ->first(fn ($group) => $group['hash'] === $hash);
         if (! $group) {
             return false;
         }
@@ -322,12 +341,12 @@ class Manager
         if ($prefix === 'app') {
             $prefix = null;
         }
-        $group = collect(app('blade.compiler')->getAnonymousComponentPaths())
+        $group = collect($this->paths)
             ->first(fn ($group) => $group['prefix'] === $prefix);
         if (! $group) {
             return false;
         }
-        $hash = $group['prefixHash'];
+        $hash = $group['hash'];
 
         $alias = implode('.', array_map(fn ($part) => Str::kebab($part), $parts));
 
@@ -341,8 +360,8 @@ class Manager
         }
 
         [$hash, $name] = explode('::', $name);
-        $group = collect(app('blade.compiler')->getAnonymousComponentPaths())
-            ->first(fn ($group) => $group['prefixHash'] === $hash);
+        $group = collect($this->paths)
+            ->first(fn ($group) => $group['hash'] === $hash);
         if (! $group) {
             return false;
         }
