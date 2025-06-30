@@ -108,7 +108,7 @@ class Manager
 
     public function resolveStandard(string $class, array $attributes)
     {
-        $info = $this->prepare(name: $attributes['view']);
+        $info = $this->prepare(name: $attributes['view'] ?? null);
         if (! $info) {
             return app()->make($class, $attributes);
         }
