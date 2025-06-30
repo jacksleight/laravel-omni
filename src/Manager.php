@@ -169,10 +169,6 @@ class Manager
         }
 
         if (! $name || ! $path || ! $class || ! file_exists($path)) {
-            $this->cache[$name] = false;
-            $this->cache[$path] = false;
-            $this->cache[$class] = false;
-
             return false;
         }
 
@@ -187,10 +183,6 @@ class Manager
             'innerPath' => Str::replaceEnd('.php', '.omni.blade.php', $outerPath),
             'classPath' => Str::replaceEnd('.php', '.omni.php', $outerPath),
         ];
-
-        $this->cache[$name] = $info;
-        $this->cache[$path] = $info;
-        $this->cache[$class] = $info;
 
         return $info;
     }
@@ -226,6 +218,10 @@ class Manager
         } else {
             $info->mode = Component::COMBINED;
         }
+
+        $this->cache[$name] = $info;
+        $this->cache[$path] = $info;
+        $this->cache[$class] = $info;
 
         return $info;
     }
