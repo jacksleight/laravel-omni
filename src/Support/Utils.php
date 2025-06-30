@@ -3,6 +3,7 @@
 namespace JackSleight\LaravelOmni\Support;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
 use JackSleight\LaravelOmni\Component;
 use Livewire\Component as LivewireComponent;
@@ -45,7 +46,11 @@ class Utils
 
     public static function resolveProps($class, $data)
     {
-        $names = Utils::getPropertyNames($class, true);
+        $names = collect()
+            ->merge(Utils::getPropertyNames($class, true))
+            ->merge(Utils::getReservedNames(array_keys($data)))
+            ->unique()
+            ->all();
 
         $attributes = $data['attributes'] ?? new ComponentAttributeBag;
 
@@ -56,6 +61,13 @@ class Utils
         $props['attributes'] = $attributes->exceptProps($names);
 
         return $props;
+    }
+
+    public static function getReservedNames($names)
+    {
+        return collect($names)
+            ->filter(fn ($name) => in_array($name, ['lazy']) || Str::startsWith($name, ['@', 'wire:model']))
+            ->all();
     }
 
     public static function resolveSlots($data = [])

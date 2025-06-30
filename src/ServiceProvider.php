@@ -62,7 +62,7 @@ class ServiceProvider extends BaseServiceProvider
 
     protected function bootPaths()
     {
-        Blade::anonymousComponentPath(resource_path('views'));
+        Omni::path(resource_path('views'));
 
         return $this;
     }

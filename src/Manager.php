@@ -35,6 +35,21 @@ class Manager
 
     protected array $cache = [];
 
+    protected array $paths = [];
+
+    public function path(string $path, ?string $prefix = null)
+    {
+        $prefixHash = hash('xxh128', $prefix ?: $path);
+
+        $this->paths[] = [
+            'path' => $path,
+            'prefix' => $prefix,
+            'prefixHash' => $prefixHash,
+        ];
+
+        Blade::anonymousComponentPath($path, $prefix);
+    }
+
     public function autoload(string $class): void
     {
         $info = $this->prepare(class: $class);
