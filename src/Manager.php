@@ -202,8 +202,16 @@ class Manager
             $path = $this->nameToPath($name);
         }
 
-        if (! $name || ! $path || ! $class || ! file_exists($path)) {
+        if (! $name || ! $path || ! $class) {
             return false;
+        }
+
+        if (! file_exists($path)) {
+            $path = Str::beforeLast($path, '.blade.php').'/'.Str::afterLast($path, '/');
+            $class = $class.'\\'.Str::afterLast($class, '\\');
+            if (! file_exists($path)) {
+                return false;
+            }
         }
 
         $outerPath = Blade::getCompiledPath($path);

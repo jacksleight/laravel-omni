@@ -265,7 +265,7 @@ These are intentional differences in the way Omni components behave compared to 
 
 ### Known Issues
 
-* Directory component paths (`counter` -> `/views/counter/counter.blade.php`) are not yet supported.
+* None.
 
 ### Unknown Differences & Issues
 
