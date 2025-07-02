@@ -12,14 +12,10 @@ use ReflectionProperty;
 
 class Utils
 {
-    public static function getPropertyNames(string $class, $protected)
+    public static function getPropertyNames(string $class)
     {
-        $visibility = $protected
-            ? (ReflectionProperty::IS_PUBLIC | ReflectionProperty::IS_PROTECTED)
-            : ReflectionProperty::IS_PUBLIC;
-
         $reflection = new ReflectionClass($class);
-        $properties = $reflection->getProperties($visibility);
+        $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
 
         $ignoreClasses = [
             Component::class,
@@ -47,7 +43,7 @@ class Utils
     public static function resolveProps($class, $data)
     {
         $names = collect()
-            ->merge(Utils::getPropertyNames($class, true))
+            ->merge(Utils::getPropertyNames($class))
             ->merge(Utils::getReservedNames(array_keys($data)))
             ->unique()
             ->all();

@@ -44,7 +44,7 @@ namespace App\Omni;
 
 class Counter
 {
-    protected int $count = 0;
+    public int $count = 0;
 } ?>
 
 <template omni>
@@ -70,7 +70,7 @@ namespace App\Omni;
 
 class Counter
 {
-    public int $count = 0; /* Make this public */
+    public int $count = 0;
 
     public function increment()
     {
@@ -193,11 +193,9 @@ Route::omni('counter/{count}', Counter::class, ['count' => 4]);
 Route::get('counter/{count}', Counter::class);
 ```
 
-## Property Visibility
+## Upgrading Components
 
-Public properties have special meaning in Livewire components, so Omni needs a way to define properties for standard components without the risk of them being exposed by mistake when switching a standard component to Livewire.
-
-Therefore it's reccomended to define standard component properties as protected instead of public, and only switch them to public when you need to. Protected properties are avaliable in a standard component's template scope.
+Omni makes it trivial to switch a standard comoponent to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side. If they contain sensitive values you may need to use Livewire's locked attribute or handle them differently. 
 
 ## Component Modes
 
@@ -258,8 +256,6 @@ import 'omni/scripts';
 
 These are intentional differences in the way Omni components behave compared to normal Blade or Livewire components.
 
-* Standard component protected properties will be filled from tag attributes and parameter arrays.
-* Standard component protected properties are available in the template scope.
 * Individual attributes are not set as variables in the template scope.
 * Conditionally rendering components by implementing `shouldRender` is not supported.
 

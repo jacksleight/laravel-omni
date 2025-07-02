@@ -38,12 +38,12 @@ class Manager
 
     protected array $cache = [];
 
-    protected array $paths = [];
+    protected array $sets = [];
 
     public function path(string $path, ?string $prefix = null)
     {
-        $this->paths[] = [
-            'path' => $path,
+        $this->sets[] = [
+            'path' => rtrim($path, '/').'/',
             'prefix' => $prefix,
             'hash' => hash('xxh128', $prefix ?: $path),
         ];
@@ -53,7 +53,7 @@ class Manager
 
     public function autoload(string $class): void
     {
-        $info = $this->prepare(class: $class);
+        $info = $this->lookup(class: $class);
         if (! $info) {
             return;
         }
@@ -69,7 +69,7 @@ class Manager
         }
 
         $path = Blade::getPath();
-        $info = $this->identify(path: $path);
+        $info = $this->define(path: $path);
         if (! $info) {
             return $code;
         }
@@ -95,6 +95,7 @@ class Manager
             $outer = ! $empty
                 ? preg_replace(static::TEMPLATE_REGEX, '@livewire("'.$info->name.'", get_defined_vars())', $outer)
                 : static::TEMPLATE_NONE;
+            $inner = Blade::compileString($inner);
             file_put_contents($info->innerPath, $inner);
         } else {
             $outer = preg_replace(static::TEMPLATE_REGEX, $inner, $outer);
@@ -108,23 +109,23 @@ class Manager
 
     public function resolveStandard(string $class, array $attributes)
     {
-        if (!isset($attributes['view'])) {
+        if (! isset($attributes['view'])) {
             return app()->make($class, $attributes);
         }
 
-        $info = $this->prepare(name: $attributes['view']);
+        $info = $this->lookup(name: $attributes['view']);
         if (! $info) {
             return app()->make($class, $attributes);
         }
 
-        $data = $attributes['data'];
+        $data = $attributes['data'] ?? [];
 
         return $this->divert(fn ($more) => $this->mount($info->name, array_merge($data, $more)));
     }
 
     public function resolveLivewire(string $name): ?string
     {
-        $info = $this->prepare(name: $name);
+        $info = $this->lookup(name: $name);
         if (! $info) {
             return null;
         }
@@ -134,22 +135,26 @@ class Manager
 
     public function mount(string $name, array $data = []): ViewContract|Htmlable|false
     {
-        $info = $this->prepare(name: $name);
+        $info = $this->lookup(name: $name);
         if (! $info) {
             throw new RuntimeException("Component [{$name}] not found.");
         }
+        if (! is_a($info->class, Component::class, true)) {
+            throw new RuntimeException("Component [{$name}] does not extend the Omni Component class.");
+        }
 
         $props = Utils::resolveProps($info->class, $data);
+        $mount = array_merge($data, $props);
 
         if ($info->mode === Component::LIVEWIRE) {
-            return new HtmlString(Livewire::mount($info->name, $props));
+            return new HtmlString(Livewire::mount($info->name, $mount));
         }
 
         $component = app()->make($info->class);
         invade($component)->setMode(Component::STANDARD);
         $component->fill($props);
 
-        Utils::callHooks($component, 'mount', $props);
+        Utils::callHooks($component, 'mount', $mount);
         $view = $component->render();
         Utils::callHooks($component, 'rendering', ['view' => $view]);
 
@@ -159,12 +164,12 @@ class Manager
     public function route(string $uri, string $name, array $data = []): Route
     {
         return app(Registrar::class)
-            ->get($uri, fn (Request $request) => $this->routeMount($request, $name, $data));
+            ->get($uri, fn (Request $request) => $this->request($request, $name, $data));
     }
 
-    protected function routeMount(Request $request, string $name, array $data = [])
+    protected function request(Request $request, string $name, array $data = [])
     {
-        $info = $this->prepare(name: $name);
+        $info = $this->lookup(name: $name);
         if (! $info) {
             throw new RuntimeException("Component [{$name}] not found.");
         }
@@ -183,21 +188,17 @@ class Manager
         return $this->mount($name, [...$data, ...$params]);
     }
 
-    public function identify(?string $name = null, ?string $path = null, ?string $class = null): object|false
+    public function define(?string $name = null, ?string $path = null, ?string $class = null): object|false
     {
         if (! $name && ! $path && ! $class) {
             throw new \InvalidArgumentException('A name, path, or class is required.');
         }
 
-        $key = $name ?? $path ?? $class;
-        if (isset($this->cache[$key])) {
-            return $this->cache[$key];
-        }
-
         if ($name) {
             $name = $this->nameToName($name);
-            $class = $this->nameToClass($name);
             $path = $this->nameToPath($name);
+            $name = $this->pathToName($path);
+            $class = $this->nameToClass($name);
         } elseif ($path) {
             $name = $this->pathToName($path);
             $class = $this->nameToClass($name);
@@ -210,14 +211,6 @@ class Manager
             return false;
         }
 
-        if (! file_exists($path)) {
-            $path = Str::beforeLast($path, '.blade.php').'/'.Str::afterLast($path, '/');
-            $class = $class.'\\'.Str::afterLast($class, '\\');
-            if (! file_exists($path)) {
-                return false;
-            }
-        }
-
         $outerPath = Blade::getCompiledPath($path);
 
         $info = (object) [
@@ -226,8 +219,8 @@ class Manager
             'path' => $path,
             'class' => $class,
             'outerPath' => $outerPath,
-            'innerPath' => Str::replaceEnd('.php', '.omni.blade.php', $outerPath),
-            'classPath' => Str::replaceEnd('.php', '.omni.php', $outerPath),
+            'innerPath' => Str::replaceEnd('.php', '.omni.inner.php', $outerPath),
+            'classPath' => Str::replaceEnd('.php', '.omni.class.php', $outerPath),
         ];
 
         return $info;
@@ -239,12 +232,7 @@ class Manager
             throw new \InvalidArgumentException('A name, path, or class is required.');
         }
 
-        $key = $name ?? $path ?? $class;
-        if (isset($this->cache[$key])) {
-            return $this->cache[$key];
-        }
-
-        $info = $this->identify($name, $path, $class);
+        $info = $this->define($name, $path, $class);
         if (! $info) {
             return false;
         }
@@ -265,6 +253,22 @@ class Manager
             $info->mode = Component::COMBINED;
         }
 
+        return $info;
+    }
+
+    public function lookup(?string $name = null, ?string $path = null, ?string $class = null): object|false
+    {
+        if (! $name && ! $path && ! $class) {
+            throw new \InvalidArgumentException('A name, path, or class is required.');
+        }
+
+        $key = $name ?? $path ?? $class;
+        if (isset($this->cache[$key])) {
+            return $this->cache[$key];
+        }
+
+        $info = $this->prepare($name, $path, $class);
+
         $this->cache[$name] = $info;
         $this->cache[$path] = $info;
         $this->cache[$class] = $info;
@@ -282,13 +286,13 @@ class Manager
             ? explode('::', $name)
             : [null, $name];
 
-        $group = collect($this->paths)
-            ->first(fn ($group) => $group['prefix'] === $prefix || $group['hash'] === $prefix);
-        if (! $group) {
+        $set = collect($this->sets)
+            ->first(fn ($set) => $set['prefix'] === $prefix || $set['hash'] === $prefix);
+        if (! $set) {
             return false;
         }
 
-        return $group['hash'].'::'.$name;
+        return $set['hash'].'::'.$name;
     }
 
     protected function pathToName(string|false $path): string|false
@@ -297,15 +301,15 @@ class Manager
             return false;
         }
 
-        $group = collect($this->paths)
-            ->first(fn ($group) => Str::startsWith($path, $group['path']));
-        if (! $group) {
+        $set = collect($this->sets)
+            ->first(fn ($set) => Str::startsWith($path, $set['path']));
+        if (! $set) {
             return false;
         }
 
-        $hash = $group['hash'];
+        $hash = $set['hash'];
         $name = Str::of($path)
-            ->after($group['path'])
+            ->after($set['path'])
             ->before('.blade.php')
             ->trim('/')
             ->replace('/', '.')
@@ -321,48 +325,49 @@ class Manager
         }
 
         [$hash, $name] = explode('::', $name);
-        $group = collect($this->paths)
-            ->first(fn ($group) => $group['hash'] === $hash);
-        if (! $group) {
+        $name = Str::replace('.', '/', $name);
+        $path = collect($this->sets)
+            ->where(fn ($set) => $set['hash'] === $hash)
+            ->reverse()
+            ->flatMap(fn ($set) => [
+                $set['path'].$name.'/'.Str::afterLast($name, '/').'.blade.php',
+                $set['path'].$name.'.blade.php',
+            ])
+            ->first(fn ($path) => file_exists($path));
+        if (! $path) {
             return false;
         }
 
-        $base = $group['path'];
-        $path = Str::of($name)
-            ->replace('.', '/')
-            ->toString();
-
-        return $base.'/'.$path.'.blade.php';
+        return $path;
     }
 
     protected function classToName(string|false $class): string|false
     {
-        if (! $class) {
+        if (! $class || ! Str::contains($class, '\\Omni\\')) {
             return false;
         }
 
-        if (! Str::contains($class, '\\Omni\\')) {
-            return false;
-        }
-
-        $parts = explode('\\', $class);
-
-        unset($parts[1]);
-
-        $prefix = Str::kebab(array_shift($parts));
+        $prefix = Str::of($class)
+            ->before('\\Omni\\')
+            ->kebab()
+            ->toString();
         if ($prefix === 'app') {
             $prefix = null;
         }
-        $group = collect($this->paths)
-            ->first(fn ($group) => $group['prefix'] === $prefix);
-        if (! $group) {
+
+        $alias = Str::of($class)
+            ->after('\\Omni\\')
+            ->explode('\\')
+            ->map(fn ($part) => Str::kebab($part))
+            ->implode('.');
+
+        $set = collect($this->sets)
+            ->first(fn ($set) => $set['prefix'] === $prefix);
+        if (! $set) {
             return false;
         }
-        $hash = $group['hash'];
 
-        $alias = implode('.', array_map(fn ($part) => Str::kebab($part), $parts));
-
-        return $hash.'::'.$alias;
+        return $set['hash'].'::'.$alias;
     }
 
     protected function nameToClass(string|false $name): string|false
@@ -372,16 +377,16 @@ class Manager
         }
 
         [$hash, $name] = explode('::', $name);
-        $group = collect($this->paths)
-            ->first(fn ($group) => $group['hash'] === $hash);
-        if (! $group) {
+        $set = collect($this->sets)
+            ->first(fn ($set) => $set['hash'] === $hash);
+        if (! $set) {
             return false;
         }
 
         return collect(explode('.', $name))
             ->map(fn ($part) => Str::studly($part))
             ->prepend('Omni')
-            ->prepend(Str::studly($group['prefix'] ?? 'App'))
+            ->prepend(Str::studly($set['prefix'] ?? 'App'))
             ->implode('\\');
     }
 

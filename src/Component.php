@@ -2,11 +2,9 @@
 
 namespace JackSleight\LaravelOmni;
 
-use Illuminate\Database\Eloquent\Model;
 use JackSleight\LaravelOmni\Concerns\HasAttributes;
 use JackSleight\LaravelOmni\Concerns\HasHelpers;
 use JackSleight\LaravelOmni\Concerns\HasSlot;
-use JackSleight\LaravelOmni\Support\Utils;
 use Livewire\Component as LivewireComponent;
 
 class Component extends LivewireComponent
@@ -33,36 +31,6 @@ class Component extends LivewireComponent
         $this->__mode = $mode;
     }
 
-    public function fill($values)
-    {
-        if ($this->__mode === self::LIVEWIRE) {
-            return parent::fill($values);
-        }
-
-        if ($values instanceof Model) {
-            $values = $values->toArray();
-        }
-
-        $names = Utils::getPropertyNames(static::class, $this->__mode === self::STANDARD);
-
-        collect($values)
-            ->only($names)
-            ->each(function ($value, $name) {
-                $this->{$name} = $value;
-            });
-    }
-
-    public function all()
-    {
-        $names = Utils::getPropertyNames(static::class, $this->__mode === self::STANDARD);
-
-        return collect($names)
-            ->mapWithKeys(function ($name) {
-                return [$name => $this->{$name} ?? null];
-            })
-            ->all();
-    }
-
     protected function with()
     {
         return [];
@@ -70,7 +38,7 @@ class Component extends LivewireComponent
 
     public function render()
     {
-        $info = Omni::prepare(class: static::class);
+        $info = Omni::lookup(class: static::class);
 
         $data = array_merge(
             $this->all(),
@@ -81,6 +49,6 @@ class Component extends LivewireComponent
             return view()->file($info->innerPath, $data);
         }
 
-        return view($info->name, $data);
+        return view()->file($info->outerPath, $data);
     }
 }
