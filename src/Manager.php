@@ -166,7 +166,7 @@ class Manager
             ->get($uri, fn (Request $request) => $this->request($request, $name, $data));
     }
 
-    protected function request(Request $request, string $name, array $data = [])
+    public function request(Request $request, string $name, array $data = [])
     {
         $info = $this->lookup(name: $name);
         if (! $info) {

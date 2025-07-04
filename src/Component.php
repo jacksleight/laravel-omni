@@ -23,7 +23,7 @@ class Component extends LivewireComponent
 
     public function __invoke()
     {
-        return Omni::mount(static::class, request()->route()->parameters());
+        return Omni::request(request(), static::class);
     }
 
     protected function setMode($mode)
