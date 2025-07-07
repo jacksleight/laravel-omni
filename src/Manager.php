@@ -69,6 +69,10 @@ class Manager
         }
 
         $path = Blade::getPath();
+        if (! $path) {
+            return $code;
+        }
+
         $info = $this->define(path: $path);
         if (! $info) {
             return $code;

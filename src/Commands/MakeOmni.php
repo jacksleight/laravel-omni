@@ -11,7 +11,7 @@ use function Laravel\Prompts\text;
 
 class MakeOmni extends Command
 {
-    protected $signature = 'make:omni {name?} {--wire}';
+    protected $signature = 'make:omni {name?} {--wire=false}';
 
     protected $description = 'Create a new Omni component';
 
