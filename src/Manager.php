@@ -136,7 +136,7 @@ class Manager
         return $info->class;
     }
 
-    public function mount(string $name, array $data = []): ViewContract|Htmlable|false
+    public function mount(string $name, array $data = []): ViewContract|Htmlable
     {
         $info = $this->lookup(name: $name);
         if (! $info) {
@@ -148,6 +148,10 @@ class Manager
 
         $props = Utils::resolveProps($info->class, $data);
         $mount = array_merge($data, $props);
+
+        if (array_key_exists('when', $props) && ! $props['when']) {
+            return new HtmlString('');
+        }
 
         if ($info->mode === Component::LIVEWIRE) {
             return new HtmlString(Livewire::mount($info->name, $mount));
