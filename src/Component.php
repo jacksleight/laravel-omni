@@ -15,8 +15,6 @@ class Component extends LivewireComponent
 
     const COMBINED = 'combined';
 
-    protected $__mode = self::LIVEWIRE;
-
     use HasAttributes;
     use HasHelpers;
     use HasSlot;
@@ -24,21 +22,6 @@ class Component extends LivewireComponent
     public function __invoke()
     {
         return Omni::request(request(), static::class);
-    }
-
-    protected function setMode($mode)
-    {
-        $this->__mode = $mode;
-    }
-
-    protected function isStandard()
-    {
-        return $this->__mode === self::STANDARD;
-    }
-
-    protected function isLivewire()
-    {
-        return $this->__mode === self::LIVEWIRE;
     }
 
     protected function with()
@@ -55,7 +38,7 @@ class Component extends LivewireComponent
             $this->with(),
         );
 
-        if ($this->isLivewire()) {
+        if ($this->getId()) {
             return view()->file($info->innerPath, $data);
         }
 

@@ -18,8 +18,6 @@ use Livewire\Drawer\ImplicitRouteBinding;
 use Livewire\Livewire;
 use RuntimeException;
 
-use function Livewire\invade;
-
 class Manager
 {
     const NAMESPACE_REGEX = '/namespace\s+[\w\\\]+\\\Omni(\\\[\w\\\]+)?\s*;/is';
@@ -158,7 +156,6 @@ class Manager
         }
 
         $component = app()->make($info->class);
-        invade($component)->setMode(Component::STANDARD);
         $component->fill($props);
 
         Utils::callHooks($component, 'mount', $mount);
