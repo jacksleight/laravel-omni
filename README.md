@@ -197,6 +197,54 @@ Route::get('counter/{count}', Counter::class);
 
 Omni makes it trivial to switch a standard comoponent to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side. If they contain sensitive values you may need to use Livewire's locked attribute or handle them differently. 
 
+## Exending Component
+
+...
+
+## Trait Components
+
+You can define components as traits, which is useful if you need reusable component parts or just want to break a larger component up into more manageable peices, with both logic and tmeplate bundled together.
+
+
+```blade
+<?php 
+namespace App\Omni\User;
+
+class Settings
+{
+    use Appearance;
+
+    // ...
+} ?>
+
+<template omni:wire>
+    <div>
+        @include('user.appearance')
+        ...
+    </div>
+</template>
+```
+
+```blade
+<?php 
+namespace App\Omni\User;
+
+trait Appearance
+{
+    public function save()
+    {
+        // ...
+    }
+} ?>
+
+<template omni>
+    <form>
+        ...
+        <button wire:click="save">Save</button>
+    </form>
+</template>
+```
+
 ## Component Modes
 
 Omni components run in one of three modes depending on the `<template>` tag you declare and the template structure.
