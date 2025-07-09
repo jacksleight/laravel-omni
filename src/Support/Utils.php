@@ -62,7 +62,7 @@ class Utils
     public static function getReservedNames($names)
     {
         return collect($names)
-            ->filter(fn ($name) => in_array($name, ['lazy']) || Str::startsWith($name, ['@', '%', 'wire:model']))
+            ->filter(fn ($name) => in_array($name, ['lazy', 'when']) || Str::startsWith($name, ['@', 'wire:model']))
             ->all();
     }
 
