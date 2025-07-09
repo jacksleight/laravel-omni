@@ -31,6 +31,16 @@ class Component extends LivewireComponent
         $this->__mode = $mode;
     }
 
+    protected function isStandard()
+    {
+        return $this->__mode === self::STANDARD;
+    }
+
+    protected function isLivewire()
+    {
+        return $this->__mode === self::LIVEWIRE;
+    }
+
     protected function with()
     {
         return [];
@@ -45,7 +55,7 @@ class Component extends LivewireComponent
             $this->with(),
         );
 
-        if ($this->__mode === self::LIVEWIRE) {
+        if ($this->isLivewire()) {
             return view()->file($info->innerPath, $data);
         }
 
