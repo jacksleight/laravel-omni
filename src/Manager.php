@@ -147,7 +147,7 @@ class Manager
         $props = Utils::resolveProps($info->class, $data);
         $mount = array_merge($data, $props);
 
-        if (array_key_exists('when', $props) && ! $props['when']) {
+        if (array_key_exists('%when', $props) && ! $props['%when']) {
             return new HtmlString('');
         }
 
