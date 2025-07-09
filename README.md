@@ -203,7 +203,7 @@ Omni makes it trivial to switch a standard comoponent to a Livewire component by
 
 ## Trait Components
 
-You can define components as traits, which is useful if you need reusable component parts or just want to break a larger component up into more manageable peices, with both logic and tmeplate bundled together.
+You can define components as traits, which is useful if you need reusable component parts or just want to break a larger component up into more manageable chunks, with the relavant logic and template bundled together.
 
 
 ```blade
