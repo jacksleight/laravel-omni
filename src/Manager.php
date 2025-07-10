@@ -144,7 +144,7 @@ class Manager
             throw new RuntimeException("Component [{$name}] does not extend the Omni Component class.");
         }
 
-        $props = Utils::resolveProps($info->class, $data);
+        $props = Utils::resolveProps($info->class, $info->mode, $data);
         $mount = array_merge($data, $props);
 
         if (array_key_exists('when', $props) && ! $props['when']) {
@@ -163,6 +163,45 @@ class Manager
         Utils::callHooks($component, 'rendering', ['view' => $view]);
 
         return $view;
+    }
+
+    public function directive($expression): string
+    {
+        return <<<PHP
+        <?php echo JackSleight\LaravelOmni\Omni::include({$expression}, array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1])); ?>
+        PHP;
+    }
+
+    public function include(string $name, array $data = []): ViewContract|Htmlable
+    {
+        if (! Str::startsWith($name, '#')) {
+            return $this->mount($name, $data);
+        }
+
+        $name = Str::after($name, '#');
+
+        $component = $data['__omni'] ?? null;
+        if (! $component || ! is_a($component, Component::class)) {
+            throw new RuntimeException("Cannot include partial [{$name}] in non-component context");
+        }
+
+        $class = $name === 'parent'
+            ? get_parent_class($component::class)
+            : (Utils::getTraitNames($component::class)[$name] ?? null);
+        if (! $class) {
+            throw new RuntimeException("Component [{$name}] not found on component [".$component::class.'].');
+        }
+
+        $info = $this->lookup(class: $class);
+        if (! $info) {
+            throw new RuntimeException("Component [{$name}] not found for component [{".$component::class.'}].');
+        }
+
+        if ($info->mode === Component::LIVEWIRE) {
+            return view()->file($info->innerPath, $data);
+        }
+
+        return view()->file($info->outerPath, $data);
     }
 
     public function route(string $uri, string $name, array $data = []): Route

@@ -40,11 +40,11 @@ class Utils
             ->toArray();
     }
 
-    public static function resolveProps($class, $data)
+    public static function resolveProps($class, $mode, $data)
     {
         $names = collect()
             ->merge(Utils::getPropertyNames($class))
-            ->merge(Utils::getReservedNames(array_keys($data)))
+            ->merge(Utils::getReservedNames($mode, array_keys($data)))
             ->unique()
             ->all();
 
@@ -59,8 +59,14 @@ class Utils
         return $props;
     }
 
-    public static function getReservedNames($names)
+    public static function getReservedNames($mode, $names)
     {
+        if ($mode !== Component::LIVEWIRE) {
+            return collect($names)
+                ->filter(fn ($name) => in_array($name, ['when']))
+                ->all();
+        }
+
         return collect($names)
             ->filter(fn ($name) => in_array($name, ['lazy', 'when']) || Str::startsWith($name, ['@', 'wire:model']))
             ->all();
@@ -73,6 +79,14 @@ class Utils
         unset($slots['__default']);
 
         return $slots;
+    }
+
+    public static function getTraitNames($class)
+    {
+        return collect(class_uses($class))
+            ->map(fn ($trait) => Str::kebab(class_basename($trait)))
+            ->flip()
+            ->all();
     }
 
     public static function callHooks($component, $name, $data = [])

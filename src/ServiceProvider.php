@@ -23,6 +23,7 @@ class ServiceProvider extends BaseServiceProvider
             ->bootComponents()
             ->bootSynths()
             ->bootMacros()
+            ->bootDirectives()
             ->bootPaths()
             ->bootCommands();
     }
@@ -48,6 +49,13 @@ class ServiceProvider extends BaseServiceProvider
     {
         View::macro('omni', [Omni::class, 'mount']);
         Router::macro('omni', [Omni::class, 'route']);
+
+        return $this;
+    }
+
+    protected function bootDirectives()
+    {
+        Blade::directive('omni', [Omni::class, 'directive']);
 
         return $this;
     }

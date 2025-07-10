@@ -216,12 +216,14 @@ class Account
 
 ### Blade Templates
 
-To render any component in a Blade template use the `x-` syntax:
+To render any component in a Blade template use the `x-` syntax or `omni` directive:
 
 ```blade
 <x-counter :count="4">
     Content
 </x-counter>
+
+@omni('counter', ['count' => 4])
 ```
 
 ### Controllers

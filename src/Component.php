@@ -36,6 +36,7 @@ class Component extends LivewireComponent
         $data = array_merge(
             $this->all(),
             $this->with(),
+            ['__omni' => $this],
         );
 
         if ($this->getId()) {
