@@ -1,5 +1,8 @@
 # Omni
 
+> [!WARNING]
+> This package is experimental and could change. Some things may not behave as expected, see known [differences](#known-differences) and [issues](#known-issues).
+
 Omni is a Laravel package and Vite plugin for building universal single-file Blade and Livewire components.
 
 The core goals of Omni are:
@@ -9,9 +12,6 @@ The core goals of Omni are:
 - A single syntax for including all components
 - A single directory structure for all components
 - A single file for all component concerns (logic, template, styles and scripts)
-
-> [!IMPORTANT]
-> I built this because I want to implement views as describe above, but this package does not get in the way of the usual view approaches. You can still render plain view files, create normal Blade and Livewire components stored in their usual locations, and use all the various Blade include directives.
 
 All Omni components can:
 
@@ -25,10 +25,6 @@ All Omni components can:
 - Include JS and CSS that’s bundled by Vite
 - Extend other Omni components
 - Live in any view directory
-
-> [!WARNING]
-> This package is experimental and could change. Some things may not behave as expected, see known [differences](#known-differences) and [issues](#known-issues).
-
 
 ## Creating Components
 
@@ -154,6 +150,68 @@ Use attributes and slots as usual. If you're using them in Livewire components O
 </template>
 ```
 
+## Exending Components
+
+You can extend components just like any other class, and include their templates using the `@omni` directive.
+
+```blade
+<?php 
+namespace App\Omni\Button;
+
+class Primary extends Button
+{
+    publlic $variant = 'primary';
+} ?>
+
+<template>
+    @omni('#parent')
+</template>
+```
+
+## Trait Components
+
+You can define components as traits and include their templates using the `@omni` directive. This is useful if you need reusable component parts with the logic and template bundled together, or just want to break a large Livewire component up into more manageable chunks without actually mounting multiple seperate components.
+
+```blade
+<?php 
+namespace App\Omni\User;
+
+trait Contact
+{
+    public function save()
+    {
+        // ...
+    }
+} ?>
+
+<template omni:wire>
+    <form>
+        ...
+        <button wire:click="save">Save</button>
+    </form>
+</template>
+```
+
+```blade
+<?php 
+namespace App\Omni\User;
+
+class Account
+{
+    use Contact;
+    use Notifications;
+    use Preferences;
+} ?>
+
+<template omni:wire>
+    <div>
+        @omni('#contact')
+        @omni('#notifications')
+        @omni('#preferences')
+    </div>
+</template>
+```
+
 ## Rendering Components
 
 ### Blade Templates
@@ -196,54 +254,6 @@ Route::get('counter/{count}', Counter::class);
 ## Upgrading Components
 
 Omni makes it trivial to switch a standard comoponent to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side. If they contain sensitive values you may need to use Livewire's locked attribute or handle them differently. 
-
-## Exending Components
-
-...
-
-## Trait Components
-
-You can define components as traits, which is useful if you need reusable component parts or just want to break a larger component up into more manageable chunks, with the relavant logic and template bundled together.
-
-
-```blade
-<?php 
-namespace App\Omni\User;
-
-class Settings
-{
-    use Appearance;
-
-    // ...
-} ?>
-
-<template omni:wire>
-    <div>
-        @include('user.appearance')
-        ...
-    </div>
-</template>
-```
-
-```blade
-<?php 
-namespace App\Omni\User;
-
-trait Appearance
-{
-    public function save()
-    {
-        // ...
-    }
-} ?>
-
-<template omni>
-    <form>
-        ...
-        <button wire:click="save">Save</button>
-    </form>
-</template>
-```
 
 ## Component Modes
 
