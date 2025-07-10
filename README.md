@@ -160,7 +160,7 @@ namespace App\Omni\Button;
 
 class Primary extends Button
 {
-    publlic $variant = 'primary';
+    public $variant = 'primary';
 } ?>
 
 <template>
