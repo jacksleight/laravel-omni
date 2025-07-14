@@ -258,10 +258,6 @@ Route::omni('counter/{count}', Counter::class, ['count' => 4]);
 Route::get('counter/{count}', Counter::class);
 ```
 
-## Upgrading Components
-
-Omni makes it trivial to switch a standard component to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side. If they contain sensitive values you may need to use Livewire's locked attribute or handle them differently. 
-
 ## Component Modes
 
 Omni components run in one of three modes depending on the `<template>` tag you declare and the template structure.
