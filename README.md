@@ -11,7 +11,7 @@ The core goals of Omni are:
 - A single API for defining all components
 - A single syntax for including all components
 - A single directory structure for all components
-- A single file for all component concerns (logic, template, styles and scripts)
+- A single file for all component concerns (logic, template, bundled styles and scripts)
 
 All Omni components can:
 
@@ -20,7 +20,7 @@ All Omni components can:
 - Be rendered from a controller
 - Be rendered in a template using `x-` syntax  
 - Pull layouts into their templates
-- Include JS and CSS that’s bundled by Vite
+- Include styles and scripts that are bundled by Vite
 - Extend other Omni components
 - Use other Omni trait components
 - Live in any view directory
