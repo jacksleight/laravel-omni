@@ -26,6 +26,8 @@ All Omni components can:
 - Extend other Omni components
 - Live in any view directory
 
+This package should happily work alongside all normal views/components, it shouldn't interfere with anything that's not an Omni component.
+
 ## Creating Components
 
 You can create Omni components manually or using the `make:omni` command.
