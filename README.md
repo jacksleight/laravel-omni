@@ -86,6 +86,9 @@ class Counter
 </x-layout>
 ```
 
+> [!CAUTION]
+> Omni makes it trivial to switch a standard component to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side.
+
 ### Name, Path and Class
 
 An Omni component's name, path and class must all match. The class namespace must include `Omni`. The part before `Omni` is the component prefix, and the part after is the component name, for example:
