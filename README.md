@@ -26,7 +26,7 @@ All Omni components can:
 - Use other Omni trait components
 - Live in any view directory
 
-This package should happily work alongside all normal views/components, it shouldn't interfere with anything that's not an Omni component.
+This package will happily work alongside all normal views/components, it doesn't interfere with anything that's not an Omni component.
 
 ## Creating Components
 
