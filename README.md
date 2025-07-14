@@ -20,7 +20,6 @@ All Omni components can:
 - Be rendered from a controller
 - Be rendered in a template using `x-` syntax  
 - Pull layouts into their templates
-- Use slots and attribute bags
 - Include JS and CSS that’s bundled by Vite
 - Extend other Omni components
 - Use other Omni trait components
@@ -116,7 +115,7 @@ php artisan make:omni counter --wire
 ```
 ### Lifecycle
 
-Livewire components run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks), standard components support the `mount` and `rendering` lifecycle hooks:
+Livewire components are handled by Livewire and run through the usual [lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks), standard components support `mount` and `rendering` lifecycle hooks:
 
 ```php
 public function mount($value)
@@ -141,18 +140,6 @@ protected function with()
         // ...
     ];
 }
-```
-
-### Attributes & Slots
-
-Use attributes and slots as usual. If you're using them in Livewire components Omni provides synthesizers to handle the serialization. 
-
-```blade
-<template omni>
-    <div {{ $attributes->class('p-4') }}>
-        {{ $slot }}
-    </div>
-</template>
 ```
 
 ## Extending Components
@@ -266,7 +253,7 @@ Omni components run in one of three modes depending on the `<template>` tag you 
   All components that declare a `omni` template run in standard mode. They support `mount` and `rendering` lifecycle hooks.
 
 * **Livewire Mode**  
-  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag run in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
+  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag run in Livewire mode. They are handled by Livewire and through the usual [lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
 
 * **Combined Mode**  
   Components that declare a `omni:wire` template and have code outside of the `<template>` tag run in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag runs in standard mode, and then the part of the template inside the `<template>` tag runs in Livewire mode.
