@@ -155,7 +155,7 @@ Use attributes and slots as usual. If you're using them in Livewire components O
 </template>
 ```
 
-## Exending Components
+## Extending Components
 
 You can extend components just like any other class, and include their templates using the `@omni` directive.
 
