@@ -257,17 +257,17 @@ Route::get('counter/{count}', Counter::class);
 
 ## Upgrading Components
 
-Omni makes it trivial to switch a standard comoponent to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side. If they contain sensitive values you may need to use Livewire's locked attribute or handle them differently. 
+Omni makes it trivial to switch a standard component to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side. If they contain sensitive values you may need to use Livewire's locked attribute or handle them differently. 
 
 ## Component Modes
 
 Omni components run in one of three modes depending on the `<template>` tag you declare and the template structure.
 
 * **Standard Mode**  
-  All components that declare a `omni` template run in standard mode. They support `mount` and `rendering` lifecycle hooks. Public and protected properties will be filled automatically and are avaliable in the template scope.
+  All components that declare a `omni` template run in standard mode. They support `mount` and `rendering` lifecycle hooks.
 
 * **Livewire Mode**  
-  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag run in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks). Public properties will be filled automatically and are avaliable in the template scope. Protected properties should be set in `mount` and provided to the template via `with`.
+  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag run in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
 
 * **Combined Mode**  
   Components that declare a `omni:wire` template and have code outside of the `<template>` tag run in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag runs in standard mode, and then the part of the template inside the `<template>` tag runs in Livewire mode.
