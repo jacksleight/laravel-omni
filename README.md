@@ -180,7 +180,7 @@ namespace App\Omni\User;
 
 trait Contact
 {
-    public function save()
+    public function saveContact()
     {
         // ...
     }
@@ -189,7 +189,7 @@ trait Contact
 <template omni:wire>
     <form>
         ...
-        <button wire:click="save">Save</button>
+        <button wire:click="saveContact">Save</button>
     </form>
 </template>
 ```
