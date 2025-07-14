@@ -1,7 +1,7 @@
-# Omni
-
 > [!WARNING]
-> This package is experimental and could change. Some things may not behave as expected, see known [differences](#known-differences) and [issues](#known-issues).
+> This is experimental and could change. See known [differences](#known-differences) and [issues](#known-issues).
+
+# Omni
 
 Omni is a Laravel package and Vite plugin for building universal single-file Blade and Livewire components.
 
@@ -321,7 +321,7 @@ These are intentional differences in the way Omni components behave compared to 
 
 ### Known Issues
 
-* None.
+* None?
 
 ### Unknown Differences & Issues
 
