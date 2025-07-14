@@ -21,7 +21,6 @@ All Omni components can:
 - Be rendered in a template using `x-` syntax  
 - Pull layouts into their templates
 - Use slots and attribute bags
-- Define template helper functions
 - Include JS and CSS that’s bundled by Vite
 - Extend other Omni components
 - Live in any view directory
