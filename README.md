@@ -218,7 +218,7 @@ class Account
 
 ### Blade Templates
 
-To render any component in a Blade template use the `x-` syntax or `omni` directive:
+To render a component in a Blade template use the `x-` syntax or `omni` directive:
 
 ```blade
 <x-counter :count="4">
@@ -230,7 +230,7 @@ To render any component in a Blade template use the `x-` syntax or `omni` direct
 
 ### Controllers
 
-To render any component from a controller action use the `omni` view macro or `mount` method:
+To render a component from a controller action use the `omni` view macro or `mount` method:
 
 ```php
 use App\Omni\Counter;
@@ -244,7 +244,7 @@ return Omni::mount(Counter::class, ['count' => 4]);
 
 ### Routes
 
-To mount any component to a route use the `omni` route macro or class directly:
+To mount a component to a route use the `omni` route macro or class directly:
 
 ```php
 use App\Omni\Counter;
