@@ -23,6 +23,7 @@ All Omni components can:
 - Use slots and attribute bags
 - Include JS and CSS that’s bundled by Vite
 - Extend other Omni components
+- Use other Omni trait components
 - Live in any view directory
 
 This package should happily work alongside all normal views/components, it shouldn't interfere with anything that's not an Omni component.
