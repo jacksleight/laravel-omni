@@ -95,8 +95,9 @@ class Manager
         if ($type === 'omni:wire') {
             $empty = trim(preg_replace(static::TEMPLATE_REGEX, '', $outer)) === '';
             $outer = ! $empty
-                ? preg_replace(static::TEMPLATE_REGEX, '@livewire("'.$info->name.'", get_defined_vars())', $outer)
+                ? preg_replace(static::TEMPLATE_REGEX, '{!! Livewire\Livewire::mount("'.$info->name.'", get_defined_vars()) !!}', $outer)
                 : static::TEMPLATE_NONE;
+            $inner = Blade::compileString($inner);
             file_put_contents($info->innerPath, $inner);
         } else {
             $outer = preg_replace(static::TEMPLATE_REGEX, $inner, $outer);
@@ -262,7 +263,7 @@ class Manager
             'path' => $path,
             'class' => $class,
             'outerPath' => $outerPath,
-            'innerPath' => Str::replaceEnd('.php', '.omni.blade.php', $outerPath),
+            'innerPath' => Str::replaceEnd('.php', '.omni.inner.php', $outerPath),
             'classPath' => Str::replaceEnd('.php', '.omni.class.php', $outerPath),
         ];
 
