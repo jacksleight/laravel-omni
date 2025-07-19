@@ -1,9 +1,9 @@
 # Omni
 
-> [!WARNING]
-> This package is experimental and could change. Some things may not behave as expected, see known [differences](#known-differences) and [issues](#known-issues).
-
 Omni is a Laravel package and Vite plugin for building universal single-file Blade and Livewire components.
+
+> [!WARNING]
+> This is an experiment and could change. See known [differences](#known-differences) and [issues](#known-issues).
 
 The core goals of Omni are:
 
@@ -11,7 +11,7 @@ The core goals of Omni are:
 - A single API for defining all components
 - A single syntax for including all components
 - A single directory structure for all components
-- A single file for all component concerns (logic, template, styles and scripts)
+- A single file for all component concerns (logic, template, bundled styles and scripts)
 
 All Omni components can:
 
@@ -20,11 +20,12 @@ All Omni components can:
 - Be rendered from a controller
 - Be rendered in a template using `x-` syntax  
 - Pull layouts into their templates
-- Use slots and attribute bags
-- Define template helper functions
-- Include JS and CSS that’s bundled by Vite
+- Include styles and scripts that are bundled by Vite
 - Extend other Omni components
+- Use other Omni trait components
 - Live in any view directory
+
+This package will happily work alongside all normal views/components, it doesn't interfere with anything that's not an Omni component.
 
 ## Creating Components
 
@@ -84,6 +85,9 @@ class Counter
 </x-layout>
 ```
 
+> [!CAUTION]
+> Omni makes it trivial to switch a standard component to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side.
+
 ### Name, Path and Class
 
 An Omni component's name, path and class must all match. The class namespace must include `Omni`. The part before `Omni` is the component prefix, and the part after is the component name, for example:
@@ -111,7 +115,7 @@ php artisan make:omni counter --wire
 ```
 ### Lifecycle
 
-Livewire components run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks), standard components support the `mount` and `rendering` lifecycle hooks:
+Livewire components are handled by Livewire and run through the usual [lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks), standard components support `mount` and `rendering` lifecycle hooks:
 
 ```php
 public function mount($value)
@@ -138,19 +142,7 @@ protected function with()
 }
 ```
 
-### Attributes & Slots
-
-Use attributes and slots as usual. If you're using them in Livewire components Omni provides synthesizers to handle the serialization. 
-
-```blade
-<template omni>
-    <div {{ $attributes->class('p-4') }}>
-        {{ $slot }}
-    </div>
-</template>
-```
-
-## Exending Components
+## Extending Components
 
 You can extend components just like any other class, and include their templates using the `@omni` directive.
 
@@ -178,7 +170,7 @@ namespace App\Omni\User;
 
 trait Contact
 {
-    public function save()
+    public function saveContact()
     {
         // ...
     }
@@ -187,7 +179,7 @@ trait Contact
 <template omni:wire>
     <form>
         ...
-        <button wire:click="save">Save</button>
+        <button wire:click="saveContact">Save</button>
     </form>
 </template>
 ```
@@ -216,7 +208,7 @@ class Account
 
 ### Blade Templates
 
-To render any component in a Blade template use the `x-` syntax or `omni` directive:
+To render a component in a Blade template use the `x-` syntax or `omni` directive:
 
 ```blade
 <x-counter :count="4">
@@ -228,7 +220,7 @@ To render any component in a Blade template use the `x-` syntax or `omni` direct
 
 ### Controllers
 
-To render any component from a controller action use the `omni` view macro or `mount` method:
+To render a component from a controller action use the `omni` view macro or `mount` method:
 
 ```php
 use App\Omni\Counter;
@@ -242,7 +234,7 @@ return Omni::mount(Counter::class, ['count' => 4]);
 
 ### Routes
 
-To mount any component to a route use the `omni` route macro or class directly:
+To mount a component to a route use the `omni` route macro or class directly:
 
 ```php
 use App\Omni\Counter;
@@ -253,19 +245,15 @@ Route::omni('counter/{count}', Counter::class, ['count' => 4]);
 Route::get('counter/{count}', Counter::class);
 ```
 
-## Upgrading Components
-
-Omni makes it trivial to switch a standard comoponent to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side. If they contain sensitive values you may need to use Livewire's locked attribute or handle them differently. 
-
 ## Component Modes
 
 Omni components run in one of three modes depending on the `<template>` tag you declare and the template structure.
 
 * **Standard Mode**  
-  All components that declare a `omni` template run in standard mode. They support `mount` and `rendering` lifecycle hooks. Public and protected properties will be filled automatically and are avaliable in the template scope.
+  All components that declare a `omni` template run in standard mode. They support `mount` and `rendering` lifecycle hooks.
 
 * **Livewire Mode**  
-  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag run in Livewire mode. They run through the usual [Livewire lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks). Public properties will be filled automatically and are avaliable in the template scope. Protected properties should be set in `mount` and provided to the template via `with`.
+  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag run in Livewire mode. They are handled by Livewire and through the usual [lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
 
 * **Combined Mode**  
   Components that declare a `omni:wire` template and have code outside of the `<template>` tag run in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag runs in standard mode, and then the part of the template inside the `<template>` tag runs in Livewire mode.
@@ -321,7 +309,7 @@ These are intentional differences in the way Omni components behave compared to 
 
 ### Known Issues
 
-* None.
+* None?
 
 ### Unknown Differences & Issues
 
