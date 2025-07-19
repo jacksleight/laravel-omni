@@ -36,17 +36,22 @@ class Manager
 
     protected array $cache = [];
 
-    protected array $sets = [];
+    protected array $paths = [];
 
-    public function path(string $path, ?string $prefix = null)
+    public function addPath(string $path, ?string $prefix = null)
     {
-        $this->sets[] = [
+        $this->paths[] = [
             'path' => rtrim($path, '/').'/',
             'prefix' => $prefix,
             'hash' => hash('xxh128', $prefix ?: $path),
         ];
 
         Blade::anonymousComponentPath($path, $prefix);
+    }
+
+    public function getPaths()
+    {
+        return $this->paths;
     }
 
     public function autoload(string $class): void
@@ -330,7 +335,7 @@ class Manager
             ? explode('::', $name)
             : [null, $name];
 
-        $set = collect($this->sets)
+        $set = collect($this->paths)
             ->first(fn ($set) => $set['prefix'] === $prefix || $set['hash'] === $prefix);
         if (! $set) {
             return false;
@@ -345,7 +350,7 @@ class Manager
             return false;
         }
 
-        $set = collect($this->sets)
+        $set = collect($this->paths)
             ->first(fn ($set) => Str::startsWith($path, $set['path']));
         if (! $set) {
             return false;
@@ -370,7 +375,7 @@ class Manager
 
         [$hash, $name] = explode('::', $name);
         $name = Str::replace('.', '/', $name);
-        $path = collect($this->sets)
+        $path = collect($this->paths)
             ->where(fn ($set) => $set['hash'] === $hash)
             ->reverse()
             ->flatMap(fn ($set) => [
@@ -405,7 +410,7 @@ class Manager
             ->map(fn ($part) => Str::kebab($part))
             ->implode('.');
 
-        $set = collect($this->sets)
+        $set = collect($this->paths)
             ->first(fn ($set) => $set['prefix'] === $prefix);
         if (! $set) {
             return false;
@@ -421,7 +426,7 @@ class Manager
         }
 
         [$hash, $name] = explode('::', $name);
-        $set = collect($this->sets)
+        $set = collect($this->paths)
             ->first(fn ($set) => $set['hash'] === $hash);
         if (! $set) {
             return false;

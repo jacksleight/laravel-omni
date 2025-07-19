@@ -70,7 +70,7 @@ class ServiceProvider extends BaseServiceProvider
 
     protected function bootPaths()
     {
-        Omni::path(resource_path('views'));
+        Omni::addPath(resource_path('views'));
 
         return $this;
     }
