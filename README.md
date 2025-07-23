@@ -154,7 +154,6 @@ You can extend components just like any other class, and include their templates
 You can define components as traits and include their templates using the `@omni` directive. This is useful if you need reusable component parts with the logic and template bundled together, or just want to break a large Livewire component up into more manageable chunks without actually mounting multiple seperate components.
 
 ```blade
-<?php 
 @omni(trait
 {
     public function saveContact()
