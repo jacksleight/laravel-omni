@@ -36,13 +36,10 @@ You can create Omni components manually or using the `make:omni` command.
 To create an Omni component manually, simply create a new view file anywhere in the views directory. They looks like this:
 
 ```blade
-<?php 
-namespace App\Omni;
-
-class Counter
+@omni(class
 {
     public int $count = 0;
-} ?>
+})
 
 <template omni>
     <div>
@@ -62,10 +59,7 @@ class Counter
 And to make it a Livewire component with a layout:
 
 ```blade
-<?php 
-namespace App\Omni;
-
-class Counter
+@omni(class
 {
     public int $count = 0;
 
@@ -73,7 +67,7 @@ class Counter
     {
         $this->count++;
     }
-} ?>
+})
 
 <x-layout>
     <template omni:wire> {{-- Enable Livewire --}}
@@ -85,24 +79,22 @@ class Counter
 </x-layout>
 ```
 
+You can also use array syntax just like the `@props` directive:
+
+```blade
+@omni([
+    'count' => 0,
+])
+
+<template omni>
+    <div>
+        {{ $count }}
+    </div>
+</template>
+```
+
 > [!CAUTION]
 > Omni makes it trivial to switch a standard component to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side.
-
-### Name, Path and Class
-
-An Omni component's name, path and class must all match. The class namespace must include `Omni`. The part before `Omni` is the component prefix, and the part after is the component name, for example:
-
-```
-Name:  counter
-Path:  resources/views/counter.blade.php
-Class: App\Omni\Counter
-
-Name:  shop-app::products.list
-Path:  vendor/shop-app/resources/views/products/list.blade.php
-Class: ShopApp\Omni\Products\List
-```
-
-A blank name prefix maps to the `App` class namespace.
 
 ### Using the Make Command
 
@@ -144,19 +136,16 @@ protected function with()
 
 ## Extending Components
 
-You can extend components just like any other class, and include their templates using the `@omni` directive.
+You can extend components just like any other class, and include their templates using the `@mount` directive.
 
 ```blade
-<?php 
-namespace App\Omni\Button;
-
-class Primary extends Button
+@omni(class extends Button
 {
     public $variant = 'primary';
-} ?>
+})
 
 <template>
-    @omni('#parent')
+    @mount('#parent')
 </template>
 ```
 
@@ -166,15 +155,13 @@ You can define components as traits and include their templates using the `@omni
 
 ```blade
 <?php 
-namespace App\Omni\User;
-
-trait Contact
+@omni(trait
 {
     public function saveContact()
     {
         // ...
     }
-} ?>
+})
 
 <template omni:wire>
     <form>
@@ -185,21 +172,18 @@ trait Contact
 ```
 
 ```blade
-<?php 
-namespace App\Omni\User;
-
-class Account
+@omni(class
 {
     use Contact;
     use Notifications;
     use Preferences;
-} ?>
+})
 
 <template omni:wire>
     <div>
-        @omni('#contact')
-        @omni('#notifications')
-        @omni('#preferences')
+        @mount('#contact')
+        @mount('#notifications')
+        @mount('#preferences')
     </div>
 </template>
 ```
@@ -208,14 +192,14 @@ class Account
 
 ### Blade Templates
 
-To render a component in a Blade template use the `x-` syntax or `omni` directive:
+To render a component in a Blade template use the `x-` syntax or `@mount` directive:
 
 ```blade
 <x-counter :count="4">
     Content
 </x-counter>
 
-@omni('counter', ['count' => 4])
+@mount('counter', ['count' => 4])
 ```
 
 ### Controllers

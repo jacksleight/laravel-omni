@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\View\Component as ViewComponent;
+use JackSleight\LaravelOmni\Support\Syntax;
 use JackSleight\LaravelOmni\Support\Utils;
 use Livewire\Drawer\ImplicitRouteBinding;
 use Livewire\Livewire;
@@ -20,11 +21,9 @@ use RuntimeException;
 
 class Manager
 {
-    const NAMESPACE_REGEX = '/namespace\s+[\w\\\]+\\\Omni(\\\[\w\\\]+)?\s*;/is';
+    const USE_REGEX = '/(?<!@)(@use)(\s*\(((?>[^()]+)|(?2))*\))/is';
 
-    const CLASS_REGEX = '/^(\s*(<\?php.*?)\?>)/is';
-
-    const DEFINITION_REGEX = '/class\s+([^\s]+)\s+\{/is';
+    const CLASS_REGEX = '/(?<!@)(@omni)(\s*\(((?>[^()]+)|(?2))*\))/is';
 
     const TEMPLATE_REGEX = '/<template\s+(omni(?:\:wire)?)>(.*)<\/template>/is';
 
@@ -66,7 +65,7 @@ class Manager
 
     public function decompose(string $code): string
     {
-        $omni = preg_match(static::TEMPLATE_REGEX, $code, $inner) || preg_match(static::NAMESPACE_REGEX, $code);
+        $omni = preg_match(static::CLASS_REGEX, $code, $class);
         if (! $omni) {
             return $code;
         }
@@ -81,12 +80,7 @@ class Manager
             return $code;
         }
 
-        if (! preg_match(static::CLASS_REGEX, $code, $class)) {
-            $class = $this->makeClass($info);
-        } else {
-            $class = preg_replace(static::DEFINITION_REGEX, 'class $1 extends \\JackSleight\\LaravelOmni\\Component {', $class[2]);
-        }
-
+        preg_match(static::TEMPLATE_REGEX, $code, $inner);
         $type = $inner[1] ?? 'omni';
         $inner = $inner[2] ?? '';
         $outer = preg_replace([
@@ -95,10 +89,20 @@ class Manager
             static::STYLE_REGEX,
         ], '', $code);
 
-        file_put_contents($info->classPath, trim($class));
+        preg_match_all(static::USE_REGEX, $code, $uses);
+        $uses = collect($uses[2])
+            ->map(fn ($use) => substr($use, 1, -1))
+            ->filter()
+            ->all();
+
+        $class = Syntax::generateClass($info, substr($class[2], 1, -1), $uses);
+        file_put_contents($info->classPath, "<?php\n\n".trim($class));
 
         if ($type === 'omni:wire') {
-            $empty = trim(preg_replace(static::TEMPLATE_REGEX, '', $outer)) === '';
+            $empty = trim(preg_replace([
+                static::TEMPLATE_REGEX,
+                static::USE_REGEX,
+            ], '', $outer)) === '';
             $outer = ! $empty
                 ? preg_replace(static::TEMPLATE_REGEX, '{!! Livewire\Livewire::mount("'.$info->name.'", get_defined_vars()) !!}', $outer)
                 : static::TEMPLATE_NONE;
@@ -143,7 +147,7 @@ class Manager
     public function mount(string $name, array $data = []): ViewContract|Htmlable
     {
         $info = $this->lookup(name: $name);
-        if (! $info) {
+        if (! $info || ! class_exists($info->class)) {
             throw new RuntimeException("Component [{$name}] not found.");
         }
         if (! is_a($info->class, Component::class, true)) {
@@ -252,8 +256,8 @@ class Manager
             $name = $this->pathToName($path);
             $class = $this->nameToClass($name);
         } elseif ($class) {
-            $name = $this->classToName($class);
-            $path = $this->nameToPath($name);
+            $path = $this->classToPath($class);
+            $name = $this->pathToName($path);
         }
 
         if (! $name || ! $path || ! $class) {
@@ -325,6 +329,15 @@ class Manager
         return $info;
     }
 
+    public function exists(?string $name = null, ?string $path = null, ?string $class = null): object|false
+    {
+        if (! $name && ! $path && ! $class) {
+            throw new \InvalidArgumentException('A name, path, or class is required.');
+        }
+
+        return $this->lookup($name, $path, $class) !== false;
+    }
+
     protected function nameToName($name): string|false
     {
         if (! $name) {
@@ -377,7 +390,6 @@ class Manager
         $name = Str::replace('.', '/', $name);
         $path = collect($this->paths)
             ->where(fn ($set) => $set['hash'] === $hash)
-            ->reverse()
             ->flatMap(fn ($set) => [
                 $set['path'].$name.'/'.Str::afterLast($name, '/').'.blade.php',
                 $set['path'].$name.'.blade.php',
@@ -390,7 +402,7 @@ class Manager
         return $path;
     }
 
-    protected function classToName(string|false $class): string|false
+    protected function classToPath(string|false $class): string|false
     {
         if (! $class || ! Str::contains($class, '\\Omni\\')) {
             return false;
@@ -404,19 +416,20 @@ class Manager
             $prefix = null;
         }
 
-        $alias = Str::of($class)
+        $name = Str::of($class)
             ->after('\\Omni\\')
             ->explode('\\')
             ->map(fn ($part) => Str::kebab($part))
-            ->implode('.');
+            ->implode('/');
 
-        $set = collect($this->paths)
-            ->first(fn ($set) => $set['prefix'] === $prefix);
-        if (! $set) {
+        $path = collect($this->paths)
+            ->map(fn ($set) => $set['path'].$name.'.blade.php')
+            ->first(fn ($path) => file_exists($path));
+        if (! $path) {
             return false;
         }
 
-        return $set['hash'].'::'.$alias;
+        return $path;
     }
 
     protected function nameToClass(string|false $name): string|false

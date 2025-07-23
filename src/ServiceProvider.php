@@ -24,7 +24,6 @@ class ServiceProvider extends BaseServiceProvider
             ->bootSynths()
             ->bootMacros()
             ->bootDirectives()
-            ->bootPaths()
             ->bootCommands();
     }
 
@@ -55,7 +54,7 @@ class ServiceProvider extends BaseServiceProvider
 
     protected function bootDirectives()
     {
-        Blade::directive('omni', [Omni::class, 'directive']);
+        Blade::directive('mount', [Omni::class, 'directive']);
 
         return $this;
     }
@@ -64,13 +63,6 @@ class ServiceProvider extends BaseServiceProvider
     {
         Livewire::propertySynthesizer(Synths\ComponentAttributeBag::class);
         Livewire::propertySynthesizer(Synths\ComponentSlot::class);
-
-        return $this;
-    }
-
-    protected function bootPaths()
-    {
-        Omni::addPath(resource_path('views'));
 
         return $this;
     }
