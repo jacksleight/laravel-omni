@@ -79,7 +79,7 @@ And to make it a Livewire component with a layout:
 </x-layout>
 ```
 
-You can also use array syntax just like the `@props` directive:
+Omni also supports array syntax just like the `@props` directive:
 
 ```blade
 @omni([
