@@ -25,6 +25,7 @@ it('converts array syntax to class', function () {
         'count' => 0,
         'label',
         'items' => [1, 'a', 3],
+        'call' => Facade::thing(1, 2, 'string'),
         'active' => true,
         0 => 'indexed',
     ]
@@ -41,6 +42,7 @@ it('converts array syntax to class', function () {
         public \$count;
         public \$label;
         public \$items;
+        public \$call;
         public \$active;
         public \$indexed;
         public function __construct()
@@ -48,6 +50,7 @@ it('converts array syntax to class', function () {
             \$this->count = 0;
             \$this->label = null;
             \$this->items = [1,'a',3];
+            \$this->call = Facade::thing(1,2,'string');
             \$this->active = true;
             \$this->indexed = null;
         }
