@@ -41,11 +41,9 @@ To create an Omni component manually, simply create a new view file anywhere in 
     public int $count = 0;
 })
 
-<template omni>
-    <div>
-        {{ $count }}
-    </div>
-</template>
+<div>
+    {{ $count }}
+</div>
 
 <style omni>
     /* ... */
@@ -70,12 +68,12 @@ And to make it a Livewire component with a layout:
 })
 
 <x-layout>
-    <template omni:wire> {{-- Enable Livewire --}}
+    @wire
         <div>
             {{ $count }}
             <button wire:click="increment">+</button>
         </div>
-    </template>
+    @endwire
 </x-layout>
 ```
 
@@ -86,11 +84,9 @@ Omni also supports array syntax just like the `@props` directive:
     'count' => 0,
 ])
 
-<template omni>
-    <div>
-        {{ $count }}
-    </div>
-</template>
+<div>
+    {{ $count }}
+</div>
 ```
 
 > [!CAUTION]
@@ -144,9 +140,7 @@ You can extend components just like any other class, and include their templates
     public $variant = 'primary';
 })
 
-<template>
-    @mount('#parent')
-</template>
+@mount('#parent')
 ```
 
 ## Trait Components
@@ -162,12 +156,12 @@ You can define components as traits and include their templates using the `@omni
     }
 })
 
-<template omni:wire>
+@wire
     <form>
         ...
         <button wire:click="saveContact">Save</button>
     </form>
-</template>
+@endwire
 ```
 
 ```blade
@@ -178,13 +172,13 @@ You can define components as traits and include their templates using the `@omni
     use Preferences;
 })
 
-<template omni:wire>
+@wire
     <div>
         @mount('#contact')
         @mount('#notifications')
         @mount('#preferences')
     </div>
-</template>
+@endwire
 ```
 
 ## Rendering Components
@@ -230,20 +224,16 @@ Route::get('counter/{count}', Counter::class);
 
 ## Component Modes
 
-Omni components run in one of three modes depending on the `<template>` tag you declare and the template structure.
+Omni components run in one of three modes depending on the template structure.
 
 * **Standard Mode**  
-  All components that declare a `omni` template run in standard mode. They support `mount` and `rendering` lifecycle hooks.
+  Components that dont use the `@wire` directive run in standard mode. They support `mount` and `rendering` lifecycle hooks.
 
 * **Livewire Mode**  
-  Components that declare a `omni:wire` template and have no code outside of the `<template>` tag run in Livewire mode. They are handled by Livewire and through the usual [lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
+  Components that use the `@wire` directive and have no code outside of it run in Livewire mode. They are handled by Livewire and through the usual [lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
 
 * **Combined Mode**  
-  Components that declare a `omni:wire` template and have code outside of the `<template>` tag run in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `<template>` tag runs in standard mode, and then the part of the template inside the `<template>` tag runs in Livewire mode.
-
-## Component Detection
-
-Any view that contains an Omni template tag or namespace declaration is considered an Omni component. If you don't need the class it can be omitted so long as you have a valid template tag. If you're building a standard component and dont need seperate style and script blocks you can omit the template tag so long as you have a valid namespace declaration.
+  Components that use the `@wire` directive and have code outside of it run in combined mode. Combined components are actually two instances of the same component. The part of the template outside the `@wire` directive runs in standard mode, and then the part of the template inside the `@wire` directive runs in Livewire mode.
 
 ## Bundling Scripts & Styles
 

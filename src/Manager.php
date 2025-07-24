@@ -21,11 +21,11 @@ use RuntimeException;
 
 class Manager
 {
-    const USE_REGEX = '/(?<!@)(@use)(\s*\(((?>[^()]+)|(?2))*\))/is';
+    const USE_REGEX = '/(?<!@)@use(\s*\(((?>[^()]+)|(?1))*\))/is';
 
-    const CLASS_REGEX = '/(?<!@)(@omni)(\s*\(((?>[^()]+)|(?2))*\))/is';
+    const CLASS_REGEX = '/(?<!@)@omni(?:(\s*\(((?>[^()]+)|(?1))*\))|\s|$)/is';
 
-    const TEMPLATE_REGEX = '/<template\s+(omni(?:\:wire)?)>(.*)<\/template>/is';
+    const WIRE_REGEX = '/@wire(.*)@endwire/is';
 
     const SCRIPT_REGEX = '/<style\s+omni>(.*?)<\/style>/is';
 
@@ -80,9 +80,8 @@ class Manager
             return $code;
         }
 
-        preg_match(static::TEMPLATE_REGEX, $code, $inner);
-        $type = $inner[1] ?? 'omni';
-        $inner = $inner[2] ?? '';
+        $wire = preg_match(static::WIRE_REGEX, $code, $inner);
+        $inner = $inner[1] ?? '';
         $outer = preg_replace([
             static::CLASS_REGEX,
             static::SCRIPT_REGEX,
@@ -90,26 +89,26 @@ class Manager
         ], '', $code);
 
         preg_match_all(static::USE_REGEX, $code, $uses);
-        $uses = collect($uses[2])
+        $uses = collect($uses[1])
             ->map(fn ($use) => substr($use, 1, -1))
             ->filter()
             ->all();
 
-        $class = Syntax::generateClass($info, substr($class[2], 1, -1), $uses);
+        $class = Syntax::generateClass($info, substr($class[1] ?? '', 1, -1), $uses);
         file_put_contents($info->classPath, "<?php\n\n".trim($class));
 
-        if ($type === 'omni:wire') {
+        if ($wire) {
             $empty = trim(preg_replace([
-                static::TEMPLATE_REGEX,
+                static::WIRE_REGEX,
                 static::USE_REGEX,
             ], '', $outer)) === '';
             $outer = ! $empty
-                ? preg_replace(static::TEMPLATE_REGEX, '{!! Livewire\Livewire::mount("'.$info->name.'", get_defined_vars()) !!}', $outer)
+                ? preg_replace(static::WIRE_REGEX, '{!! Livewire\Livewire::mount("'.$info->name.'", get_defined_vars()) !!}', $outer)
                 : static::TEMPLATE_NONE;
             $inner = Blade::compileString($inner);
             file_put_contents($info->innerPath, $inner);
         } else {
-            $outer = preg_replace(static::TEMPLATE_REGEX, $inner, $outer);
+            $outer = preg_replace(static::WIRE_REGEX, $inner, $outer);
             if (file_exists($info->innerPath)) {
                 unlink($info->innerPath);
             }

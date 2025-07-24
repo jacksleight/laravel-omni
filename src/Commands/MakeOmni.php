@@ -52,9 +52,8 @@ class MakeOmni extends Command
         $this->makeDirectory($path);
 
         $stub = $wire ? $this->getLivewireStub() : $this->getStandardStub();
-        $content = $this->populateStub($stub, $class, $namespace);
 
-        $this->files->put($path, $content);
+        $this->files->put($path, $stub);
 
         $this->info("Component [{$name}] created successfully.");
 
@@ -109,19 +108,14 @@ class MakeOmni extends Command
 
     protected function getStandardStub(): string
     {
-        return '<?php 
-namespace {{ namespace }};
-
-class {{ class }}
+        return '@omni(class
 {
     protected string $message = \'Hello from {{ class }}!\';
-} ?>
+})
 
-<template omni>
-    <div>
-        {{ $message }}
-    </div>
-</template>
+<div>
+    {{ $message }}
+</div>
 
 <style omni>
     /* Component styles */
@@ -135,10 +129,7 @@ class {{ class }}
 
     protected function getLivewireStub(): string
     {
-        return '<?php 
-namespace {{ namespace }};
-
-class {{ class }}
+        return '@omni(class
 {
     public string $message = \'Hello from {{ class }}!\';
 
@@ -146,14 +137,14 @@ class {{ class }}
     {
         $this->message = \'Updated: \' . now()->format(\'H:i:s\');
     }
-} ?>
+})
 
-<template omni:wire>
+@wire
     <div>
         <p>{{ $message }}</p>
         <button wire:click="updateMessage">Update</button>
     </div>
-</template>
+@endwire
 
 <style omni>
     /* Component styles */
@@ -163,14 +154,5 @@ class {{ class }}
     /* Component scripts */
 </script>
 ';
-    }
-
-    protected function populateStub(string $stub, string $class, string $namespace): string
-    {
-        return str_replace(
-            ['{{ namespace }}', '{{ class }}'],
-            [$namespace, $class],
-            $stub
-        );
     }
 }
