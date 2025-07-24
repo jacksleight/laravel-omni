@@ -54,7 +54,7 @@ To create an Omni component manually, simply create a new view file anywhere in 
 </script>
 ```
 
-And to make it a Livewire component with a layout:
+Or for a Livewire component with a layout:
 
 ```blade
 @omni(class
@@ -88,9 +88,6 @@ Omni also supports array syntax just like the `@props` directive:
     {{ $count }}
 </div>
 ```
-
-> [!CAUTION]
-> Omni makes it trivial to switch a standard component to a Livewire component by simply updating the template tag. However when doing this you should carefully review all public properties as they will now be exposed client side.
 
 ### Using the Make Command
 
