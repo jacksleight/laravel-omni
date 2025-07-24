@@ -45,11 +45,11 @@ To create an Omni component manually, simply create a new view file anywhere in 
     {{ $count }}
 </div>
 
-<style omni>
+<style bundle>
     /* ... */
 </style>
 
-<script omni>
+<script bundle>
     /* ... */
 </script>
 ```
@@ -197,28 +197,28 @@ To render a component in a Blade template use the `x-` syntax or `@mount` direct
 
 ### Controllers
 
-To render a component from a controller action use the `omni` view macro or `mount` method:
+To render a component from a controller action use the `mount` view macro or `mount` method:
 
 ```php
 use App\Omni\Counter;
 use JackSleight\LaravelOmni\Omni;
 
-return view()->omni('counter', ['count' => 4]);
-return view()->omni(Counter::class, ['count' => 4]);
+return view()->mount('counter', ['count' => 4]);
+return view()->mount(Counter::class, ['count' => 4]);
 return Omni::mount('counter', ['count' => 4]);
 return Omni::mount(Counter::class, ['count' => 4]);
 ```
 
 ### Routes
 
-To mount a component to a route use the `omni` route macro or class directly:
+To mount a component to a route use the `mount` route macro or class directly:
 
 ```php
 use App\Omni\Counter;
 use JackSleight\LaravelOmni\Omni;
 
-Route::omni('counter/{count}', 'counter', ['count' => 4]);
-Route::omni('counter/{count}', Counter::class, ['count' => 4]);
+Route::mount('counter/{count}', 'counter', ['count' => 4]);
+Route::mount('counter/{count}', Counter::class, ['count' => 4]);
 Route::get('counter/{count}', Counter::class);
 ```
 

@@ -27,9 +27,9 @@ class Manager
 
     const WIRE_REGEX = '/@wire(.*)@endwire/is';
 
-    const SCRIPT_REGEX = '/<style\s+omni>(.*?)<\/style>/is';
+    const SCRIPT_REGEX = '/<style\s+bundle>(.*?)<\/style>/is';
 
-    const STYLE_REGEX = '/<script\s+omni>(.*?)<\/script>/is';
+    const STYLE_REGEX = '/<script\s+bundle>(.*?)<\/script>/is';
 
     const TEMPLATE_NONE = '<!-- __OMNI_TEMPLATE_NONE__ -->';
 

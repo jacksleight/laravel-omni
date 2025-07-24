@@ -117,11 +117,11 @@ class MakeOmni extends Command
     {{ $message }}
 </div>
 
-<style omni>
+<style bundle>
     /* Component styles */
 </style>
 
-<script omni>
+<script bundle>
     /* Component scripts */
 </script>
 ';
@@ -146,11 +146,11 @@ class MakeOmni extends Command
     </div>
 @endwire
 
-<style omni>
+<style bundle>
     /* Component styles */
 </style>
 
-<script omni>
+<script bundle>
     /* Component scripts */
 </script>
 ';

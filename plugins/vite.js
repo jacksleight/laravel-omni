@@ -9,8 +9,8 @@ export default ({ views }) => {
     const stylesModuleId = 'omni/styles';
     const scriptModuleIdPrefix = scriptsModuleId + ':';
 
-    const scriptRegex = /<script\s+omni>(.*?)<\/script>/is;
-    const styleRegex = /<style\s+omni>(.*?)<\/style>/is;
+    const scriptRegex = /<script\s+bundle>(.*?)<\/script>/is;
+    const styleRegex = /<style\s+bundle>(.*?)<\/style>/is;
     const styleImportRegex = new RegExp(`@import\\s+['"]${stylesModuleId}['"];`, 'is');
 
     const cssFiles = [];
