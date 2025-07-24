@@ -49,8 +49,8 @@ it('converts array syntax to class', function () {
         {
             \$this->count = 0;
             \$this->label = null;
-            \$this->items = [1,'a',3];
-            \$this->call = Facade::thing(1,2,'string');
+            \$this->items = [1, 'a', 3];
+            \$this->call = Facade::thing(1, 2, 'string');
             \$this->active = true;
             \$this->indexed = null;
         }
