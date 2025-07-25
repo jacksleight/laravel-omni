@@ -27,6 +27,14 @@ All Omni components can:
 
 This package will happily work alongside all normal views/components, it doesn't interfere with anything that's not an Omni component.
 
+## Installation
+
+Install the package via Composer:
+
+```bash
+composer require jacksleight/laravel-omni:dev-main
+```
+
 ## Creating Components
 
 You can create Omni components manually or using the `make:omni` command.

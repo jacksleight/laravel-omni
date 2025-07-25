@@ -346,14 +346,20 @@ class Manager
         [$prefix, $name] = Str::contains($name, '::')
             ? explode('::', $name)
             : [null, $name];
+        $name = Str::replace('.', '/', $name);
 
-        $set = collect($this->paths)
-            ->first(fn ($set) => $set['prefix'] === $prefix || $set['hash'] === $prefix);
-        if (! $set) {
+        $hash = collect($this->paths)
+            ->filter(fn ($set) => $set['prefix'] === $prefix || $set['hash'] === $prefix)
+            ->flatMap(fn ($set) => [
+                $set['path'].$name.'/'.Str::afterLast($name, '/').'.blade.php' => $set['hash'],
+                $set['path'].$name.'.blade.php' => $set['hash'],
+            ])
+            ->first(fn ($hash, $path) => file_exists($path));
+        if (! $hash) {
             return false;
         }
 
-        return $set['hash'].'::'.$name;
+        return $hash.'::'.$name;
     }
 
     protected function pathToName(string|false $path): string|false
