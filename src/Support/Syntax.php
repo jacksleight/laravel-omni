@@ -6,7 +6,7 @@ use Illuminate\Support\Str;
 
 class Syntax
 {
-    public static function generateClass($info, $code, $uses = [])
+    public static function generateClass(object $info, string $code, array $uses = []): string
     {
         $code = rtrim(trim($code), ';');
 
@@ -34,12 +34,12 @@ class Syntax
         return "namespace $namespace;\n\n$uses\n\nclass $basename extends $extends\n{\n$body\n}";
     }
 
-    protected static function generateClassFromEmpty()
+    protected static function generateClassFromEmpty(): array
     {
         return ['Component', ''];
     }
 
-    protected static function generateClassFromArray($code)
+    protected static function generateClassFromArray(string $code): array
     {
         $code = trim($code, '[]');
         if (empty(trim($code))) {
@@ -73,7 +73,7 @@ class Syntax
         return ['Component', "    $props\n    public function __construct()\n    {\n        $assis\n    }"];
     }
 
-    protected static function generateClassFromAnonymous($code)
+    protected static function generateClassFromAnonymous(string $code): array
     {
         $pattern = '/class(?:\s*extends\s*(\w*))?\s*\{(.*)\}/is';
 

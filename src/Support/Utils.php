@@ -12,7 +12,7 @@ use ReflectionProperty;
 
 class Utils
 {
-    public static function getPropertyNames(string $class)
+    public static function getPropertyNames(string $class): array
     {
         $reflection = new ReflectionClass($class);
         $properties = $reflection->getProperties(ReflectionProperty::IS_PUBLIC);
@@ -30,7 +30,7 @@ class Utils
             ->all();
     }
 
-    public static function getMethodArgumentNames(string $class, $method)
+    public static function getMethodArgumentNames(string $class, string $method): array
     {
         $reflection = new \ReflectionMethod($class, $method);
         $parameters = $reflection->getParameters();
@@ -40,7 +40,7 @@ class Utils
             ->toArray();
     }
 
-    public static function resolveProps($class, $mode, $data)
+    public static function resolveProps(string $class, string $mode, array $data): array
     {
         $names = collect()
             ->merge(Utils::getPropertyNames($class))
@@ -59,7 +59,7 @@ class Utils
         return $props;
     }
 
-    public static function getReservedNames($mode, $names)
+    public static function getReservedNames(string $mode, array $names): array
     {
         if ($mode !== Component::LIVEWIRE) {
             return collect($names)
@@ -72,7 +72,7 @@ class Utils
             ->all();
     }
 
-    public static function resolveSlots($data = [])
+    public static function resolveSlots(array $data = []): array
     {
         $slots = $data['__laravel_slots'];
         $slots['slot'] = $slots['__default'];
@@ -81,7 +81,7 @@ class Utils
         return $slots;
     }
 
-    public static function getTraitNames($class)
+    public static function getTraitNames(string $class): array
     {
         return collect(class_uses($class))
             ->map(fn ($trait) => Str::kebab(class_basename($trait)))
@@ -89,7 +89,7 @@ class Utils
             ->all();
     }
 
-    public static function callHooks($component, $name, $data = [])
+    public static function callHooks(object $component, string $name, array $data = []): void
     {
         if (method_exists($component, $name)) {
             $args = Arr::only($data, static::getMethodArgumentNames($component::class, $name));

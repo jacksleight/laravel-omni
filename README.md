@@ -33,7 +33,7 @@ You can create Omni components manually or using the `make:omni` command.
 
 ### Manual Creation
 
-To create an Omni component manually, simply create a new view file anywhere in the views directory. They looks like this:
+To create an Omni component manually, simply create a new view file anywhere in the views directory. They look like this:
 
 ```blade
 @omni(class
@@ -129,7 +129,7 @@ protected function with()
 
 ## Extending Components
 
-You can extend components just like any other class, and include their templates using the `@mount` directive.
+You can extend components just like any other class, and include their templates using the `@omni` directive.
 
 ```blade
 @omni(class extends Button
@@ -142,7 +142,7 @@ You can extend components just like any other class, and include their templates
 
 ## Trait Components
 
-You can define components as traits and include their templates using the `@omni` directive. This is useful if you need reusable component parts with the logic and template bundled together, or just want to break a large Livewire component up into more manageable chunks without actually mounting multiple seperate components.
+You can define components as traits and include their templates using the `@omni` directive. This is useful if you need reusable component parts with the logic and template bundled together, or just want to break a large Livewire component up into more manageable chunks without actually mounting multiple separate components.
 
 ```blade
 @omni(trait
@@ -224,7 +224,7 @@ Route::get('counter/{count}', Counter::class);
 Omni components run in one of three modes depending on the template structure.
 
 * **Standard Mode**  
-  Components that dont use the `@wire` directive run in standard mode. They support `mount` and `rendering` lifecycle hooks.
+  Components that don't use the `@wire` directive run in standard mode. They support `mount` and `rendering` lifecycle hooks.
 
 * **Livewire Mode**  
   Components that use the `@wire` directive and have no code outside of it run in Livewire mode. They are handled by Livewire and through the usual [lifecycle](https://livewire.laravel.com/docs/lifecycle-hooks).
@@ -295,4 +295,4 @@ These are intentional differences in the way Omni components behave compared to 
 
 ## Credits
 
-While Omni does not depend on [Livewire Volt](https://github.com/livewire/volt) and doesn't support any of it's functional syntax, it is obviously heavily inspired by Volt's single-file approach. This package would not exist if it wasn't for Volt, so a huge thanks to the Volt team. ❤️
+While Omni does not depend on [Livewire Volt](https://github.com/livewire/volt) and doesn't support any of its functional syntax, it is obviously heavily inspired by Volt's single-file approach. This package would not exist if it wasn't for Volt, so a huge thanks to the Volt team. ❤️
