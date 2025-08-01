@@ -219,7 +219,7 @@ To mount a component to a route use the class directly:
 ```php
 use App\Omni\Counter;
 
-Route::post('counter/{count}', Counter::class);
+Route::get('counter/{count}', Counter::class);
 ```
 
 You can also mount a component and then call one of it's actions directly from a route:
