@@ -2,7 +2,6 @@
 
 namespace JackSleight\LaravelOmni;
 
-use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
@@ -47,7 +46,6 @@ class ServiceProvider extends BaseServiceProvider
     protected function bootMacros()
     {
         View::macro('mount', [Omni::class, 'mount']);
-        Router::macro('mount', [Omni::class, 'route']);
 
         return $this;
     }

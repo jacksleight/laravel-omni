@@ -2,12 +2,13 @@
 
 namespace JackSleight\LaravelOmni;
 
+use Illuminate\Routing\Controllers\HasMiddleware;
 use JackSleight\LaravelOmni\Concerns\HasAttributes;
 use JackSleight\LaravelOmni\Concerns\HasHelpers;
 use JackSleight\LaravelOmni\Concerns\HasSlot;
 use Livewire\Component as LivewireComponent;
 
-class Component extends LivewireComponent
+class Component extends LivewireComponent implements HasMiddleware
 {
     const STANDARD = 'standard';
 
@@ -19,9 +20,9 @@ class Component extends LivewireComponent
     use HasHelpers;
     use HasSlot;
 
-    public function __invoke()
+    public static function middleware()
     {
-        return Omni::request(request(), static::class);
+        return fn ($request, $next) => Omni::request($request, $next, static::class);
     }
 
     protected function with()

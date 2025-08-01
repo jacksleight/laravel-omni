@@ -3,12 +3,10 @@
 namespace JackSleight\LaravelOmni;
 
 use Closure;
-use Illuminate\Contracts\Routing\Registrar;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View as ViewContract;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
@@ -154,24 +152,46 @@ class Manager
         }
 
         $props = Utils::resolveProps($info->class, $info->mode, $data);
-        $mount = array_merge($data, $props);
+        $args = array_merge($data, $props);
 
         if (array_key_exists('when', $props) && ! $props['when']) {
             return new HtmlString('');
         }
 
         if ($info->mode === Component::LIVEWIRE) {
-            return new HtmlString(Livewire::mount($info->name, $mount));
+            return new HtmlString(Livewire::mount($info->name, $args));
         }
 
         $component = app()->make($info->class);
         $component->fill($props);
 
-        Utils::callHooks($component, 'mount', $mount);
+        Utils::callHooks($component, 'mount', $args);
         $view = $component->render();
         Utils::callHooks($component, 'rendering', ['view' => $view]);
 
         return $view;
+    }
+
+    public function mountCall(string $name, string $method, array $data = []): ViewContract|Htmlable|null
+    {
+        $info = $this->lookup(name: $name);
+        if (! $info || ! class_exists($info->class)) {
+            throw new RuntimeException("Component [{$name}] not found.");
+        }
+        if (! is_a($info->class, Component::class, true)) {
+            throw new RuntimeException("Component [{$name}] does not extend the Omni Component class.");
+        }
+
+        $props = Utils::resolveProps($info->class, $info->mode, $data);
+        $args = array_merge($data, $props);
+
+        $component = app()->make($info->class);
+        $component->fill($props);
+
+        Utils::callHooks($component, 'mount', $args);
+        app()->call([$component, $method], $args);
+
+        return null;
     }
 
     public function directive($expression): string
@@ -213,31 +233,35 @@ class Manager
         return view()->file($info->outerPath, $data);
     }
 
-    public function route(string $uri, string $name, array $data = []): Route
+    public function request(Request $request, Closure $next, string $class)
     {
-        return app(Registrar::class)
-            ->get($uri, fn (Request $request) => $this->request($request, $name, $data));
-    }
-
-    public function request(Request $request, string $name, array $data = [])
-    {
-        $info = $this->lookup(name: $name);
-        if (! $info) {
-            throw new RuntimeException("Component [{$name}] not found.");
-        }
-
         $route = $request->route();
-        try {
-            $params = (new ImplicitRouteBinding(app()))
-                ->resolveAllParameters($route, new ($info->class));
-        } catch (ModelNotFoundException $exception) {
-            if (method_exists($route, 'getMissing') && $route->getMissing()) {
-                abort($route->getMissing()(request()));
-            }
-            throw $exception;
-        }
+        $action = $route->getAction();
+        $method = Str::after($action['uses'], '@');
 
-        return $this->mount($name, [...$data, ...$params]);
+        $action['uses'] = function ($request) use ($class, $method, $route) {
+            try {
+                $params = (new ImplicitRouteBinding(app()))
+                    ->resolveAllParameters($route, new ($class));
+            } catch (ModelNotFoundException $exception) {
+                if (method_exists($route, 'getMissing') && $route->getMissing()) {
+                    abort($route->getMissing()(request()));
+                }
+                throw $exception;
+            }
+
+            if ($method === '__invoke') {
+                return $this->mount($class, $params);
+            }
+
+            // @todo Also pass Url attribute props from the request
+            $this->mountCall($class, $method, [...$params, 'request' => $request]);
+        };
+
+        $route->setAction($action);
+
+        return $next($request);
+
     }
 
     public function define(?string $name = null, ?string $path = null, ?string $class = null): object|false

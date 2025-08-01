@@ -202,7 +202,7 @@ To render a component in a Blade template use the `x-` syntax or `@mount` direct
 
 ### Controllers
 
-To render a component from a controller action use the `mount` view macro or `mount` method:
+To render a component from a controller action use the `mount` view macro:
 
 ```php
 use App\Omni\Counter;
@@ -210,21 +210,24 @@ use JackSleight\LaravelOmni\Omni;
 
 return view()->mount('counter', ['count' => 4]);
 return view()->mount(Counter::class, ['count' => 4]);
-return Omni::mount('counter', ['count' => 4]);
-return Omni::mount(Counter::class, ['count' => 4]);
 ```
 
 ### Routes
 
-To mount a component to a route use the `mount` route macro or class directly:
+To mount a component to a route use the class directly:
 
 ```php
 use App\Omni\Counter;
-use JackSleight\LaravelOmni\Omni;
 
-Route::mount('counter/{count}', 'counter', ['count' => 4]);
-Route::mount('counter/{count}', Counter::class, ['count' => 4]);
-Route::get('counter/{count}', Counter::class);
+Route::post('counter/{count}', Counter::class);
+```
+
+You can also mount a component and then call one of it's actions directly from a route:
+
+```php
+use App\Omni\Auth\Logout;
+
+Route::post('logout', [Logout::class, 'logout']);
 ```
 
 ## Component Modes
