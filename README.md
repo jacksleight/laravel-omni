@@ -2,6 +2,9 @@
 
 Omni is a Laravel package and Vite plugin for building universal Blade and Livewire components.
 
+> [!NOTE]
+> I'm rewriting this for Livewire 4! ⚡️🥳
+
 > [!WARNING]
 > This is an experiment and could change. See known [differences](#known-differences) and [issues](#known-issues).
 
